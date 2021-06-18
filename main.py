@@ -1,8 +1,9 @@
-import discord
 import os
+import discord
+import asyncio
+from discord.ext.commands import Bot
 from dotenv import load_dotenv
 
-# from clash_royale_client import ClashRoyaleClient # fix this later with better import practises
 from clan_members_rank import ClanMembersRanker
 
 load_dotenv()
@@ -11,69 +12,66 @@ client = discord.Client()
 DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
 clan_members_ranker = ClanMembersRanker()
 
-@client.event
+bot = Bot("!")
+
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print('We have logged in as {0.user}'.format(bot))
 
-@client.event
-async def on_message(message):
-    if message.author == client.user:
-        return
+# Discord bot commands
+@bot.command()
+async def marco(ctx):
+    async with ctx.typing():
+        await asyncio.sleep(0.5)
+    await ctx.send('Polo! Bot is up and running!')
 
-    msg = message.content
-
-    if msg.startswith('!marco'):
-        await message.channel.send('Polo! Hello there! Bot is up and running')
-
+@bot.command()
+async def membercardsranked(ctx, *args):
     invalid_cmd_reply = 'Please provide a clan tag. E.g.\n`!membercardsranked 9GULPJ9L`'
-    if msg.startswith('!membercardsranked'):
-        split_msg = msg.split('!membercardsranked ',1)
-        
-        if len(split_msg) == 1:
-            await message.channel.send(invalid_cmd_reply)
-            return
-
-        clan_tag = split_msg[1].upper()
-        if clan_tag == '':
-            await message.channel.send(invalid_cmd_reply)
-            return
-
-        # TODO: might want some try catch before sending result
+    if len(args) == 0:
+        await ctx.send(invalid_cmd_reply)
+        return
+    clan_tag = args[0]
+    
+    # TODO: Why does the bot stop typing so quickly (seems there's a 10 second limit)? Function below hasn't finish completing yet and it finishes typing
+    async with ctx.typing():
+        # TODO: might want some try catch before sending result in case API requests fail or something...
         print("Started fetch ranked members processing...")
         clan_members_ranked = clan_members_ranker.getClanCardsRank(clan_tag)
         print("Completed fetch ranked members processing")
-        await message.channel.send(pretty_clan_members_ranked_output(clan_members_ranked))
+        await asyncio.sleep(15)
+
+    await ctx.send(pretty_clan_members_ranked_output(clan_members_ranked))
 
 def pretty_clan_members_ranked_output(clan_members_ranked):
-    final_output = '      Name     |   tag    | # lvl13 | # lvl12 | # lvl11'
-    final_output += '\n-------------------------------------------------------'
-    # Only print top 15 members
-    for member in clan_members_ranked[:15]:
+    final_output = 'Rank|           Name          |   tag    | # lvl13 | # lvl12 | # lvl11'
+    final_output += '\n{}+{}+{}+{}+{}+{}'.format('-'*4, '-'*25, '-'*10, '-'*9, '-'*9, '-'*9)
+    # Only print top 20 members (Can only have 15 boat defenses anyway)
+    for idx, member in enumerate(clan_members_ranked[:20]):
         n13 = member['member_card_levels'][13]
         n12 = member['member_card_levels'][12]
         n11 = member['member_card_levels'][11]
-        output_line = '{:^15}|{:^10}|{:^9}|{:^9}|{:^9}'.format(member['name'], member['tag'], n13, n12, n11)
+        output_line = '{:^4}|{:^25}|{:^10}|{:^9}|{:^9}|{:^9}'.format(idx + 1, member['name'], member['tag'], n13, n12, n11)
         final_output += '\n' + output_line
     return final_output
 
-client.run(DISCORD_BOT_TOKEN)
-
-# Dependencies
-# python-dotenv
-# discord.py
-
-# Ausclan tag
-#9GULPJ9L
+bot.run(DISCORD_BOT_TOKEN)
 
 # TODO:
 # nice to have
-# - Fix file/project layour
-# - pipenv/readme/setup
+# - Fix file/project layout
+# - venv
+# - setup
+# / readme
+# - Add a makefile?
+# - setup
+# - pylint
 # - test responding with pretty list
+# - Make discord bot typing animation or something while request is processing
 # - have arguments to specify include troops only (exclude buildings/spells)
     # - to do this, would need a dictionary storing 
-# - Make discord bot typing animation or something while request is processing
 # - Store the result or somehow cache things to make less responses? (we're being rate limited....or reuse connection somehow hmmmmmm)
+    # - Could have an SQLite db to store for just out clan (update it once every 10/30mins?) and that way results would be returned instantly almost
 
 # Tutorials followed:
 # https://www.freecodecamp.org/news/create-a-discord-bot-with-python/
