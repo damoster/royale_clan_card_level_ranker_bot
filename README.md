@@ -1,6 +1,6 @@
 # Clash Royale Clan Member Ranker Discord bot
 
-Discord bot which ranks members in a specific clan according to how many cards of a certain level they have. Comparison starts from number of level 13 cards they have. If it's a tie, card count of the next card level lower is used (e.g. level 12 card count) and so on.
+Discord bot which ranks members in a specific clan according to how many cards of a certain level they have. Comparison starts from number of level 13 cards they have. If it's a tie, card count of the next card level lower is used (e.g. level 12 card count) and so on. This is useful for deciding order of players for boat defenses in clan wars 2.0
 
 ## Discord commands available
 `!marco` - returns a message reply from bot to indicate it's running and connected properly
