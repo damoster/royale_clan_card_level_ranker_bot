@@ -32,7 +32,7 @@ async def membercardsranked(ctx, *args):
         await ctx.send(invalid_cmd_reply)
         return
     clan_tag = args[0]
-    
+
     # TODO: Why does the bot stop typing so quickly (seems there's a 10 second limit)? Function below hasn't finish completing yet and it finishes typing
     async with ctx.typing():
         # TODO: might want some try catch before sending result in case API requests fail or something...
@@ -60,11 +60,7 @@ bot.run(DISCORD_BOT_TOKEN)
 # TODO:
 # nice to have
 # - Fix file/project layout
-# - venv
-# - setup
-# / readme
 # - Add a makefile?
-# - setup
 # - pylint
 # - test responding with pretty list
 # - Make discord bot typing animation or something while request is processing
@@ -72,13 +68,3 @@ bot.run(DISCORD_BOT_TOKEN)
     # - to do this, would need a dictionary storing 
 # - Store the result or somehow cache things to make less responses? (we're being rate limited....or reuse connection somehow hmmmmmm)
     # - Could have an SQLite db to store for just out clan (update it once every 10/30mins?) and that way results would be returned instantly almost
-
-# Tutorials followed:
-# https://www.freecodecamp.org/news/create-a-discord-bot-with-python/
-# https://developer.clashroyale.com/#/documentation 
-
-# Set up steps
-# 0. Must use python3
-# 1. setup env (TODO use pipenv or something to make it easier)
-# 2. make an application with a discord bot. Get the TOKEN for the bot
-# 3. make an account on https://developer.clashroyale.com/ and get a ROYALE_API_KEY 
