@@ -32,12 +32,9 @@ Python3+
     ```
 
 ## Running tests
-// TODO: Add tests https://stackoverflow.com/questions/1896918/running-unittest-with-typical-test-directory-structure
-
 ```
-python3 -m unittest tests/clan_members_rank_test.py
+python3 -m unittest
 ```
-// TODO: Fix test/project layout so can just run all the test modules inside the `test` package
 
 ## References
 Helpful links used during development
