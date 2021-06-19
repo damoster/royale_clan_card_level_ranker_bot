@@ -37,7 +37,7 @@ async def membercardsranked(ctx, *args):
     async with ctx.typing():
         # TODO: might want some try catch before sending result in case API requests fail or something...
         print("Started fetch ranked members processing...")
-        clan_members_ranked = clan_members_ranker.getClanCardsRank(clan_tag)
+        clan_members_ranked = clan_members_ranker.get_clan_cards_rank(clan_tag)
         print("Completed fetch ranked members processing")
         await asyncio.sleep(15)
 
@@ -48,9 +48,9 @@ def pretty_clan_members_ranked_output(clan_members_ranked):
     final_output += '\n{}+{}+{}+{}+{}+{}'.format('-'*4, '-'*25, '-'*10, '-'*9, '-'*9, '-'*9)
     # Only print top 20 members (Can only have 15 boat defenses anyway)
     for idx, member in enumerate(clan_members_ranked[:20]):
-        n13 = member['member_card_levels'][13]
-        n12 = member['member_card_levels'][12]
-        n11 = member['member_card_levels'][11]
+        n13 = member['card_level_counts'][13]
+        n12 = member['card_level_counts'][12]
+        n11 = member['card_level_counts'][11]
         output_line = '{:^4}|{:^25}|{:^10}|{:^9}|{:^9}|{:^9}'.format(idx + 1, member['name'], member['tag'], n13, n12, n11)
         final_output += '\n' + output_line
     return final_output

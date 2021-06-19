@@ -32,10 +32,8 @@ Python3+
     ```
 
 ## Running tests
-// TODO: Add tests https://stackoverflow.com/questions/1896918/running-unittest-with-typical-test-directory-structure
-
 ```
-python -m unittest
+python3 -m unittest
 ```
 
 ## References
