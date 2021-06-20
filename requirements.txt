@@ -7,6 +7,7 @@ discord==1.0.1
 discord.py==1.7.3
 idna==2.10
 idna-ssl==1.1.0
+mockito==1.2.2
 multidict==5.1.0
 python-dotenv==0.17.1
 requests==2.25.1
