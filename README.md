@@ -18,6 +18,10 @@ Python3+
     ```shell
     pip3 install -r requirements.txt
     ```
+    OR using the Makefile
+    ```
+    make init
+    ```
 2. Create a `.env` file in the same folder as this project. The environment variables you will putting in it are:
     ```python
     DISCORD_BOT_TOKEN=<discord-bot-token>
@@ -30,10 +34,18 @@ Python3+
     ```
     python3 main.py
     ```
+    OR using the Makefile
+    ```
+    make run
+    ```
 
 ## Running tests
 ```
-python3 -m unittest
+pytest
+```
+OR using the Makefile
+```
+make test
 ```
 
 ## References

@@ -8,23 +8,24 @@ from tests.resources import clash_royale_client_responses
 player1 = {
     'tag': '#PL4Y3R1',
     'name': 'player1',
-    'card_level_counts': {13: 17, 12: 28, 11:11, 10:4, 9:1, 8:2, 7:8, 6:0, 5:0, 4:0, 3:0, 2:9, 1:0}
+    'card_level_counts': {13: 17, 12: 28, 11: 11, 10: 4, 9: 1, 8: 2, 7: 8, 6: 0, 5: 0, 4: 0, 3: 0, 2: 9, 1: 0}
 }
 player2 = {
     'tag': '#PL4Y3R2',
     'name': 'player2',
-    'card_level_counts': {13: 17, 12: 28, 11:11, 10:4, 9:1, 8:2, 7:8, 6:0, 5:0, 4:0, 3:0, 2:7, 1:0}
+    'card_level_counts': {13: 17, 12: 28, 11: 11, 10: 4, 9: 1, 8: 2, 7: 8, 6: 0, 5: 0, 4: 0, 3: 0, 2: 7, 1: 0}
 }
 player3 = {
     'tag': '#PL4Y3R3',
     'name': 'player3',
-    'card_level_counts': {13: 30, 12: 8, 11:32, 10:0, 9:0, 8:0, 7:0, 6:0, 5:0, 4:0, 3:0, 2:0, 1:0}
+    'card_level_counts': {13: 30, 12: 8, 11: 32, 10: 0, 9: 0, 8: 0, 7: 0, 6: 0, 5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
 }
 player4 = {
     'tag': '#PL4Y3R4',
     'name': 'player4',
-    'card_level_counts': {13: 30, 12: 8, 11:32, 10:0, 9:0, 8:0, 7:0, 6:0, 5:0, 4:0, 3:0, 2:0, 1:0}
+    'card_level_counts': {13: 30, 12: 8, 11: 32, 10: 0, 9: 0, 8: 0, 7: 0, 6: 0, 5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
 }
+
 
 class TestClanMembersRanker(unittest.TestCase):
 
@@ -51,24 +52,33 @@ class TestClanMembersRanker(unittest.TestCase):
 
         # when
         clanMembersRanker = ClanMembersRanker()
-        card_level_counts = clanMembersRanker.get_card_level_counts(player_cards)        
-        
+        card_level_counts = clanMembersRanker.get_card_level_counts(player_cards)
+
         # then
         self.assertEqual(card_level_counts, expected_card_level_counts)
 
     def test_get_clan_cards_rank(self):
         clanMembersRanker = ClanMembersRanker()
         clan_tag = "#S0M3CL4N"
-        
+
         # Mock API responses and certain function calls
-        when(clanMembersRanker.clash_royale_client).get_clan_members(clan_tag).thenReturn(clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE)
-        when(clanMembersRanker).get_player_info('#YV9GU2VG').thenReturn(clash_royale_client_responses.PLAYER_1_RESPONSE)
-        when(clanMembersRanker).get_player_info('#8VUG0GQRY').thenReturn(clash_royale_client_responses.PLAYER_2_RESPONSE)
-        when(clanMembersRanker).get_player_info('#LYJVYUUUR').thenReturn(clash_royale_client_responses.PLAYER_3_RESPONSE)
+        when(clanMembersRanker.clash_royale_client).get_clan_members(clan_tag).thenReturn(
+            clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE
+        )
+        when(clanMembersRanker).get_player_info('#YV9GU2VG').thenReturn(
+            clash_royale_client_responses.PLAYER_1_RESPONSE
+        )
+        when(clanMembersRanker).get_player_info('#8VUG0GQRY').thenReturn(
+            clash_royale_client_responses.PLAYER_2_RESPONSE
+        )
+        when(clanMembersRanker).get_player_info('#LYJVYUUUR').thenReturn(
+            clash_royale_client_responses.PLAYER_3_RESPONSE
+        )
 
         # Expected sort order (in terms of card counts is player3, player1, player2)
         member_cards_ranked = clanMembersRanker.get_clan_cards_rank(clan_tag)
         self.assertEqual([m['tag'] for m in member_cards_ranked], ['#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
+
 
 if __name__ == '__main__':
     unittest.main()
