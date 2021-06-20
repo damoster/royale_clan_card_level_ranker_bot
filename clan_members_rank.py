@@ -1,8 +1,8 @@
 from functools import cmp_to_key
 from multiprocessing import Pool
-from time import sleep
 
 from clash_royale_client import ClashRoyaleClient
+
 
 # NOTE: we want the highest level to come first (sort descending)
 def card_count_comparator(count1, count2):
@@ -10,8 +10,9 @@ def card_count_comparator(count1, count2):
         return 1
     elif count1 > count2:
         return -1
-    else: 
+    else:
         return 0
+
 
 def compare_card_levels(p1, p2):
     compare_result = 0
@@ -23,19 +24,23 @@ def compare_card_levels(p1, p2):
         card_level -= 1
     return compare_result
 
+
 class ClanMembersRanker:
     def __init__(self):
         # Using pool size of 50 since that is the player limit in a clan
-        self.pool_size = 50 # Using for I/O bound task (API requests)
+        self.pool_size = 50  # Using for I/O bound task (API requests)
         self.clash_royale_client = ClashRoyaleClient()
 
     def get_card_level_counts(self, player_cards):
         # TODO: split into card types, e.g.
         # card_level_counts = { 13: { 'totalCount': 'spellCount': x, 'buildingCount': y, 'troopCount': z }, etc. }
-        card_level_counts = { i: 0 for i in range(1, 14) }
+        # OR
+        # card_level_counts = { "totalCount": {13: 22, 12: 14, etc.}, "troopCount": {13: 12, 12: 10, etc.}, etc.}
+        card_level_counts = {i: 0 for i in range(1, 14)}
 
         for card in player_cards:
-            # At the beginning of time, maxLevel of legendaries used to be 5. While the UI has updated that to 13, the data still has it relative to that maximum.
+            # At the beginning of time, maxLevel of legendaries used to be 5.
+            # While the UI has updated that to 13, the data still has it relative to that maximum.
             card_level = 13 - (card['maxLevel'] - card['level'])
             card_level_counts[card_level] += 1
 
@@ -64,11 +69,10 @@ class ClanMembersRanker:
                 'card_level_counts': self.get_card_level_counts(member['cards'])
             }
             member_cards_ranked.append(member_card_levels)
-            #debugging
+            # debugging
             # print(member_card_levels)
 
         # Rank members then return results
         member_cards_ranked.sort(key=cmp_to_key(compare_card_levels))
 
         return member_cards_ranked
-

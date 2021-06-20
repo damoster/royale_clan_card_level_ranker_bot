@@ -15,9 +15,11 @@ clan_members_ranker = ClanMembersRanker()
 
 bot = Bot("!")
 
+
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
+
 
 # Discord bot commands
 @bot.command()
@@ -25,6 +27,7 @@ async def marco(ctx):
     async with ctx.typing():
         await asyncio.sleep(0.5)
     await ctx.send('Polo! Bot is up and running!')
+
 
 @bot.command()
 async def membercardsranked(ctx, *args):
@@ -42,6 +45,7 @@ async def membercardsranked(ctx, *args):
 
     await ctx.send(pretty_clan_members_ranked_output(clan_members_ranked))
 
+
 def pretty_clan_members_ranked_output(clan_members_ranked):
     final_output = 'Rank|           Name          |   tag    | # lvl13 | # lvl12 | # lvl11'
     final_output += '\n{}+{}+{}+{}+{}+{}'.format('-'*4, '-'*25, '-'*10, '-'*9, '-'*9, '-'*9)
@@ -54,6 +58,7 @@ def pretty_clan_members_ranked_output(clan_members_ranked):
         final_output += '\n' + output_line
     return final_output
 
+
 bot.run(DISCORD_BOT_TOKEN)
 
 # TODO:
@@ -63,4 +68,4 @@ bot.run(DISCORD_BOT_TOKEN)
 # - pylint
 # - test responding with pretty list
 # - have arguments to specify include troops only (exclude buildings/spells)
-    # - to do this, would need a dictionary storing 
+#   - to do this, would need a dictionary storing
