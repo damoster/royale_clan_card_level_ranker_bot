@@ -4,7 +4,7 @@ PYTHON=python3
 PIP=pip3
 
 clean-pyc:
-	find -name '*.py?' -delete
+	find . -name '*.py?' -delete
 
 # Running
 init:
