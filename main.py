@@ -4,6 +4,7 @@ import asyncio
 import discord
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
+from textwrap import dedent
 
 from clan_members_rank import ClanMembersRanker
 
@@ -46,12 +47,29 @@ async def membercardsranked(ctx, *args):
     await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked))
 
 
+# Command specifically for AUSCLAN so they don't have to remember commands / clan_tag
+@bot.command()
+async def ausclan(ctx):
+    async with ctx.typing():
+        # TODO: might want some try catch before sending result in case API requests fail or something...
+        print("Started fetch ranked members processing...")
+        clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank("9GULPJ9L")
+        print("Completed fetch ranked members processing")
+
+    await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked))
+
+
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked):
     n = 20  # Number of players to show
     top_n = clan_members_ranked[:n]
 
     embed = discord.Embed(
-        description='Players ranked by number of cards they have at each level. Comparison start at level 13 card count',
+        description=dedent('''
+            Players ranked by number of cards they have at each level.
+            Comparison start at level 13 card count. Showing the top {} players.
+            Note that for clan wars 2.0 there can only be 15 players adding cards
+            for boat defenses.
+        '''.format(n)),
         colour=discord.Colour.blue()
     )
 
