@@ -45,13 +45,15 @@ class TestClanMembersRanker(unittest.TestCase):
         self.assertTrue(compare_card_levels(player3, player4) == 0)
 
     def test_get_card_level_counts(self):
-        clanMembersRanker = ClanMembersRanker()
-        
-        # Mock API responses
-        when(clanMembersRanker.clash_royale_client).get_player_info("#8VUG0GQRY").thenReturn(clash_royale_client_responses.PLAYER_1_RESPONSE)
-
-        card_level_counts = clanMembersRanker.get_card_level_counts("#8VUG0GQRY")
+        # given
         expected_card_level_counts = {1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 1, 7: 1, 8: 2, 9: 6, 10: 27, 11: 28, 12: 24, 13: 12}
+        player_cards = clash_royale_client_responses.PLAYER_2_RESPONSE['cards']
+
+        # when
+        clanMembersRanker = ClanMembersRanker()
+        card_level_counts = clanMembersRanker.get_card_level_counts(player_cards)        
+        
+        # then
         self.assertEqual(card_level_counts, expected_card_level_counts)
 
     def test_get_clan_cards_rank(self):
@@ -60,13 +62,13 @@ class TestClanMembersRanker(unittest.TestCase):
         
         # Mock API responses and certain function calls
         when(clanMembersRanker.clash_royale_client).get_clan_members(clan_tag).thenReturn(clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE)
-        when(clanMembersRanker).get_card_level_counts('#LYJVYUUUR').thenReturn(player1['card_level_counts'])
-        when(clanMembersRanker).get_card_level_counts('#8VUG0GQRY').thenReturn(player2['card_level_counts'])
-        when(clanMembersRanker).get_card_level_counts('#YV9GU2VG').thenReturn(player3['card_level_counts'])
+        when(clanMembersRanker).get_player_info('#YV9GU2VG').thenReturn(clash_royale_client_responses.PLAYER_1_RESPONSE)
+        when(clanMembersRanker).get_player_info('#8VUG0GQRY').thenReturn(clash_royale_client_responses.PLAYER_2_RESPONSE)
+        when(clanMembersRanker).get_player_info('#LYJVYUUUR').thenReturn(clash_royale_client_responses.PLAYER_3_RESPONSE)
 
         # Expected sort order (in terms of card counts is player3, player1, player2)
         member_cards_ranked = clanMembersRanker.get_clan_cards_rank(clan_tag)
-        self.assertEqual([m['tag'] for m in member_cards_ranked], ['#YV9GU2VG', '#LYJVYUUUR', '#8VUG0GQRY'])
+        self.assertEqual([m['tag'] for m in member_cards_ranked], ['#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
 
 if __name__ == '__main__':
     unittest.main()

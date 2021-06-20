@@ -1,4 +1,5 @@
 import os
+
 import requests
 from dotenv import load_dotenv
 
@@ -16,11 +17,19 @@ class ClashRoyaleClient:
         # Note: the '%23' is # when it is in the url
         request_url = '{}/clans/%23{}/members'.format(self.base_url, cleaned_tag)
         response = requests.get(request_url, headers=self.request_headers)
-        return response.json()
+        if response.status_code == 200:
+            return response.json()
+        else:
+            # TODO is throwing an exception the best way of handling this? Should add exception handlinig at top level probs
+            raise ValueError("[get_clan_members] recieved response code: {}".format(response.status_code))
 
     # url param pre-condition -> player_tag should not have # and all caps
     def get_player_info(self, player_tag):
         cleaned_tag = player_tag.replace('#','').upper()
         request_url = '{}/players/%23{}'.format(self.base_url, cleaned_tag)
         response = requests.get(request_url, headers=self.request_headers)
-        return response.json()
+        if response.status_code == 200:
+            return response.json()
+        else:
+            # TODO is throwing an exception the best way of handling this? Should add exception handlinig at top level probs
+            raise ValueError("[get_player_info] recieved response code: {}".format(response.status_code))

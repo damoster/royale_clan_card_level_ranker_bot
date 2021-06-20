@@ -14,7 +14,7 @@ Python3+
 
 ## How to Run Bot
 
-1. Setup/Switch to a virtual environment (see google's [venv guide](https://cloud.google.com/python/docs/setup#linux_1)). Then install dependencies as so:
+1. Setup/Switch to a virtual environment (for `venv` see google's [venv guide](https://cloud.google.com/python/docs/setup#linux_1)). Then install dependencies as so:
     ```shell
     pip3 install -r requirements.txt
     ```

@@ -1,6 +1,7 @@
 import os
-import discord
+
 import asyncio
+import discord
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
 
@@ -33,13 +34,11 @@ async def membercardsranked(ctx, *args):
         return
     clan_tag = args[0]
 
-    # TODO: Why does the bot stop typing so quickly (seems there's a 10 second limit)? Function below hasn't finish completing yet and it finishes typing
     async with ctx.typing():
         # TODO: might want some try catch before sending result in case API requests fail or something...
         print("Started fetch ranked members processing...")
         clan_members_ranked = clan_members_ranker.get_clan_cards_rank(clan_tag)
         print("Completed fetch ranked members processing")
-        await asyncio.sleep(15)
 
     await ctx.send(pretty_clan_members_ranked_output(clan_members_ranked))
 
@@ -63,8 +62,5 @@ bot.run(DISCORD_BOT_TOKEN)
 # - Add a makefile?
 # - pylint
 # - test responding with pretty list
-# - Make discord bot typing animation or something while request is processing
 # - have arguments to specify include troops only (exclude buildings/spells)
     # - to do this, would need a dictionary storing 
-# - Store the result or somehow cache things to make less responses? (we're being rate limited....or reuse connection somehow hmmmmmm)
-    # - Could have an SQLite db to store for just out clan (update it once every 10/30mins?) and that way results would be returned instantly almost
