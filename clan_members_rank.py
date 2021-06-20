@@ -62,7 +62,8 @@ class ClanMembersRanker:
 
     # pre-condition: clan_tag should not have # and all caps
     def get_clan_cards_rank(self, clan_tag):
-        members_list = self.clash_royale_client.get_clan_members(clan_tag)['items']
+        clan_info = self.clash_royale_client.get_clan_info(clan_tag)
+        members_list = clan_info['memberList']
         members_info = self.get_all_player_info(members_list)
 
         member_cards_ranked = []
@@ -79,4 +80,4 @@ class ClanMembersRanker:
         # Rank members then return results
         member_cards_ranked.sort(key=cmp_to_key(compare_card_levels))
 
-        return member_cards_ranked
+        return clan_info, member_cards_ranked
