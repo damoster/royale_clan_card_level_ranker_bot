@@ -57,16 +57,15 @@ class ClanMembersRanker:
         with Pool(processes=self.pool_size) as pool:
             members_tags = [member['tag'] for member in members_list]
             members_info = pool.map(self.get_player_info, members_tags)
-        
+
         return members_info
 
     # pre-condition: clan_tag should not have # and all caps
     def get_clan_cards_rank(self, clan_tag):
         members_list = self.clash_royale_client.get_clan_members(clan_tag)['items']
-        member_cards_ranked = []
-
         members_info = self.get_all_player_info(members_list)
 
+        member_cards_ranked = []
         for member in members_info:
             member_card_levels = {
                 'tag': member['tag'],
