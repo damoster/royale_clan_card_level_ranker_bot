@@ -1,60 +1,81 @@
 # These test response based off schemas from https://developer.clashroyale.com/#/documentation
 
 CLAN_MEMBERS_API_RESPONSE = {
-   "items": [
-      {
-         "tag": "#YV9GU2VG",
-         "name": "Goku",
-         "role": "member",
-         "lastSeen": "20210617T113925.000Z",
-         "expLevel": 13,
-         "trophies": 5495,
-         "arena": {
-            "id": 54000013,
-            "name": "Challenger II"
-         },
-         "clanRank": 5,
-         "previousClanRank": 7,
-         "donations": 36,
-         "donationsReceived": 160,
-         "clanChestPoints": 0
+  "tag": "#9GULPJ9L",
+  "name": "AUSCLAN",
+  "type": "open",
+  "description": """
+    During battles days, do wars ASAP. Do all attacks within 22hrs of war reset.
+    Chat if you can't or be kicked! RoyaleApi.com
+    """,
+  "badgeId": 16000025,
+  "clanScore": 53290,
+  "clanWarTrophies": 2310,
+  "location": {
+    "id": 57000021,
+    "name": "Australia",
+    "isCountry": True,
+    "countryCode": "AU"
+  },
+  "requiredTrophies": 5000,
+  "donationsPerWeek": 18072,
+  "clanChestStatus": "inactive",
+  "clanChestLevel": 1,
+  "clanChestMaxLevel": 0,
+  "members": 50,
+  "memberList": [
+    {
+      "tag": "#YV9GU2VG",
+      "name": "Goku",
+      "role": "member",
+      "lastSeen": "20210617T113925.000Z",
+      "expLevel": 13,
+      "trophies": 5495,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
       },
-      {
-         "tag": "#8VUG0GQRY",
-         "name": "joseph",
-         "role": "elder",
-         "lastSeen": "20210617T122354.000Z",
-         "expLevel": 13,
-         "trophies": 5501,
-         "arena": {
-            "id": 54000013,
-            "name": "Challenger II"
-         },
-         "clanRank": 4,
-         "previousClanRank": 5,
-         "donations": 68,
-         "donationsReceived": 160,
-         "clanChestPoints": 0
+      "clanRank": 5,
+      "previousClanRank": 7,
+      "donations": 36,
+      "donationsReceived": 160,
+      "clanChestPoints": 0
+    },
+    {
+      "tag": "#8VUG0GQRY",
+      "name": "joseph",
+      "role": "elder",
+      "lastSeen": "20210617T122354.000Z",
+      "expLevel": 13,
+      "trophies": 5501,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
       },
-      {
-         "tag": "#LYJVYUUUR",
-         "name": "ZEPOL 1244",
-         "role": "coLeader",
-         "lastSeen": "20210617T123313.000Z",
-         "expLevel": 13,
-         "trophies": 5563,
-         "arena": {
-            "id": 54000013,
-            "name": "Challenger II"
-         },
-         "clanRank": 2,
-         "previousClanRank": 1,
-         "donations": 632,
-         "donationsReceived": 360,
-         "clanChestPoints": 0
-      }
-   ],
-   "paging": {"cursors": {}}
+      "clanRank": 4,
+      "previousClanRank": 5,
+      "donations": 68,
+      "donationsReceived": 160,
+      "clanChestPoints": 0
+    },
+    {
+      "tag": "#LYJVYUUUR",
+      "name": "ZEPOL 1244",
+      "role": "coLeader",
+      "lastSeen": "20210617T123313.000Z",
+      "expLevel": 13,
+      "trophies": 5563,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 2,
+      "previousClanRank": 1,
+      "donations": 632,
+      "donationsReceived": 360,
+      "clanChestPoints": 0
+    }
+  ]
 }
 
 PLAYER_1_RESPONSE = {

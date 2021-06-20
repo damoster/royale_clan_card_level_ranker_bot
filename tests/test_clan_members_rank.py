@@ -62,11 +62,11 @@ class TestClanMembersRanker(unittest.TestCase):
         clan_tag = "#S0M3CL4N"
 
         # Mock API responses and certain function calls
-        when(clanMembersRanker.clash_royale_client).get_clan_members(clan_tag).thenReturn(
+        when(clanMembersRanker.clash_royale_client).get_clan_info(clan_tag).thenReturn(
             clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE
         )
         when(clanMembersRanker).get_all_player_info(
-            clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE['items']
+            clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE['memberList']
         ).thenReturn(
             [
                 clash_royale_client_responses.PLAYER_1_RESPONSE,
@@ -76,7 +76,7 @@ class TestClanMembersRanker(unittest.TestCase):
         )
 
         # Expected sort order (in terms of card counts is player3, player1, player2)
-        member_cards_ranked = clanMembersRanker.get_clan_cards_rank(clan_tag)
+        _, member_cards_ranked = clanMembersRanker.get_clan_cards_rank(clan_tag)
         self.assertEqual([m['tag'] for m in member_cards_ranked], ['#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
 
 
