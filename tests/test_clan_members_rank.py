@@ -65,14 +65,14 @@ class TestClanMembersRanker(unittest.TestCase):
         when(clanMembersRanker.clash_royale_client).get_clan_members(clan_tag).thenReturn(
             clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE
         )
-        when(clanMembersRanker).get_player_info('#YV9GU2VG').thenReturn(
-            clash_royale_client_responses.PLAYER_1_RESPONSE
-        )
-        when(clanMembersRanker).get_player_info('#8VUG0GQRY').thenReturn(
-            clash_royale_client_responses.PLAYER_2_RESPONSE
-        )
-        when(clanMembersRanker).get_player_info('#LYJVYUUUR').thenReturn(
-            clash_royale_client_responses.PLAYER_3_RESPONSE
+        when(clanMembersRanker).get_all_player_info(
+            clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE['items']
+        ).thenReturn(
+            [
+                clash_royale_client_responses.PLAYER_1_RESPONSE,
+                clash_royale_client_responses.PLAYER_2_RESPONSE,
+                clash_royale_client_responses.PLAYER_3_RESPONSE
+            ]
         )
 
         # Expected sort order (in terms of card counts is player3, player1, player2)
