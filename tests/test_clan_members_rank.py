@@ -51,22 +51,22 @@ class TestClanMembersRanker(unittest.TestCase):
         player_cards = clash_royale_client_responses.PLAYER_2_RESPONSE['cards']
 
         # when
-        clanMembersRanker = ClanMembersRanker()
-        card_level_counts = clanMembersRanker.get_card_level_counts(player_cards)
+        clan_members_rank = ClanMembersRanker()
+        card_level_counts = clan_members_rank.get_card_level_counts(player_cards)
 
         # then
         self.assertEqual(card_level_counts, expected_card_level_counts)
 
     def test_get_clan_cards_rank(self):
-        clanMembersRanker = ClanMembersRanker()
+        clan_members_rank = ClanMembersRanker()
         clan_tag = "#S0M3CL4N"
 
         # Mock API responses and certain function calls
-        when(clanMembersRanker.clash_royale_client).get_clan_info(clan_tag).thenReturn(
-            clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE
+        when(clan_members_rank.clash_royale_client).get_clan_info(clan_tag).thenReturn(
+            clash_royale_client_responses.CLAN_INFO_API_RESPONSE
         )
-        when(clanMembersRanker).get_all_player_info(
-            clash_royale_client_responses.CLAN_MEMBERS_API_RESPONSE['memberList']
+        when(clan_members_rank).get_all_player_info(
+            clash_royale_client_responses.CLAN_INFO_API_RESPONSE['memberList']
         ).thenReturn(
             [
                 clash_royale_client_responses.PLAYER_1_RESPONSE,
@@ -76,7 +76,8 @@ class TestClanMembersRanker(unittest.TestCase):
         )
 
         # Expected sort order (in terms of card counts is player3, player1, player2)
-        _, member_cards_ranked = clanMembersRanker.get_clan_cards_rank(clan_tag)
+        clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(clan_tag)
+        self.assertEqual(clan_info, clash_royale_client_responses.CLAN_INFO_API_RESPONSE)
         self.assertEqual([m['tag'] for m in member_cards_ranked], ['#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
 
 

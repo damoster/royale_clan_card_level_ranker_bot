@@ -1,6 +1,6 @@
 # These test response based off schemas from https://developer.clashroyale.com/#/documentation
 
-CLAN_MEMBERS_API_RESPONSE = {
+CLAN_INFO_API_RESPONSE = {
   "tag": "#9GULPJ9L",
   "name": "AUSCLAN",
   "type": "open",
