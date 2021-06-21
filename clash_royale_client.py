@@ -1,11 +1,9 @@
 import os
 
 import requests
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
+# pre-condition: Assumes environment variable 'ROYALE_API_KEY' has been set
 class ClashRoyaleClient:
     def __init__(self):
         self.base_url = 'https://api.clashroyale.com/v1'
