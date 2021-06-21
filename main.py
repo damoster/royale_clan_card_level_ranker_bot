@@ -2,6 +2,7 @@ import os
 
 import asyncio
 import discord
+from discord.ext import commands
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
 from textwrap import dedent
@@ -9,24 +10,52 @@ from textwrap import dedent
 from clan_members_rank import ClanMembersRanker
 
 
-def main():
-    # Refresh environment variables
-    try:
-        del os.environ['DISCORD_BOT_TOKEN']
-        del os.environ['ROYALE_API_KEY']
-    except Exception:
-        print("No environment variables to clear")
+def setup_tokens():
+    expected_env_vars = [
+        'DISCORD_BOT_TOKEN',
+        'ROYALE_API_KEY'
+    ]
+    # Refresh environment variables since load_dotenv doesn't override them if already set
+    for env_var in expected_env_vars:
+        if os.getenv(env_var) is not None:
+            del os.environ[env_var]
+            print('Refreshed environment variable: {}'.format(env_var))
 
+    # Load environment variables saved in .env file
     load_dotenv()
+    for env_var in expected_env_vars:
+        if os.getenv(env_var) is None:
+            raise ValueError(
+                '.env file is missing or {} has not been defined in the .env file'.format(env_var)
+            )
 
-    DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+
+def main():
+    setup_tokens()
+
     clan_members_ranker = ClanMembersRanker()
-
     bot = Bot("!")
 
     @bot.event
     async def on_ready():
-        print('We have logged in as {0.user}'.format(bot))
+        print('Bot is up and ready. We have logged in as {0.user}'.format(bot))
+
+    @bot.event
+    async def on_command_error(ctx, error):
+        # Change print statement to logging instead later on
+        print(error)
+        if isinstance(error, commands.CommandNotFound):
+            return  # Return because we don't want to show an error for every command not found
+        else:
+            message = "Oh no! Something went wrong while running the command!"
+
+        await ctx.send(embed=discord.Embed(
+            description=message,
+            colour=discord.Colour.red()
+        ))
+        # Saw some tutorials which want to delete messages about failure after 5 seconds, do we want this?
+        # await ctx.send(message, delete_after=5)
+        # await ctx.message.delete(delay=5)
 
     # Discord bot commands
     @bot.command()
@@ -93,7 +122,7 @@ def main():
 
         return embed
 
-    bot.run(DISCORD_BOT_TOKEN)
+    bot.run(os.getenv('DISCORD_BOT_TOKEN'))
 
 
 if __name__ == '__main__':
