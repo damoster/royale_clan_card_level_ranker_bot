@@ -3,7 +3,7 @@
 PYTHON=python3
 PIP=pip3
 
-clean-pyc:
+clean:
 	find . -name '*.py?' -delete
 
 # Running
@@ -17,7 +17,7 @@ run:
 freeze:
 	$(PIP) freeze | grep -v "pkg-resources" > requirements.txt
 
-test: clean-pyc
+test: clean
 	pytest
 
 lint:
