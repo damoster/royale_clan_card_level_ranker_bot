@@ -3,21 +3,21 @@
 PYTHON=python3
 PIP=pip3
 
-clean-pyc:
+clean:
 	find . -name '*.py?' -delete
 
 # Running
 init:
 	$(PIP) install -Ur requirements.txt
 
-run:
+run: clean
 	$(PYTHON) main.py
 
 # Development
 freeze:
 	$(PIP) freeze | grep -v "pkg-resources" > requirements.txt
 
-test: clean-pyc
+test: clean
 	pytest
 
 lint:

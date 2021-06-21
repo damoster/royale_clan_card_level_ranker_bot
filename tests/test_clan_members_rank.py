@@ -35,6 +35,7 @@ class TestClanMembersRanker(unittest.TestCase):
         self.assertTrue(card_count_comparator(12, 7) < 0)
         self.assertTrue(card_count_comparator(12, 12) == 0)
 
+# TODO: add cases for troop/spells etc
     def test_compare_card_levels(self):
         # player1 should be ranked higher than player2
         self.assertTrue(compare_card_levels(player1, player2) < 0)
@@ -47,12 +48,14 @@ class TestClanMembersRanker(unittest.TestCase):
 
     def test_get_card_level_counts(self):
         # given
-        expected_card_level_counts = {1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 1, 7: 1, 8: 2, 9: 6, 10: 27, 11: 28, 12: 24, 13: 12}
+        expected_card_level_counts = {
+            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 1, 7: 1, 8: 2, 9: 6, 10: 27, 11: 28, 12: 24, 13: 12}
         player_cards = clash_royale_client_responses.PLAYER_2_RESPONSE['cards']
 
         # when
         clan_members_rank = ClanMembersRanker()
-        card_level_counts = clan_members_rank.get_card_level_counts(player_cards)
+        card_level_counts = clan_members_rank.get_card_level_counts(
+            player_cards)
 
         # then
         self.assertEqual(card_level_counts, expected_card_level_counts)
@@ -76,9 +79,12 @@ class TestClanMembersRanker(unittest.TestCase):
         )
 
         # Expected sort order (in terms of card counts is player3, player1, player2)
-        clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(clan_tag)
-        self.assertEqual(clan_info, clash_royale_client_responses.CLAN_INFO_API_RESPONSE)
-        self.assertEqual([m['tag'] for m in member_cards_ranked], ['#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
+        clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
+            clan_tag)
+        self.assertEqual(
+            clan_info, clash_royale_client_responses.CLAN_INFO_API_RESPONSE)
+        self.assertEqual([m['tag'] for m in member_cards_ranked], [
+                         '#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
 
 
 if __name__ == '__main__':

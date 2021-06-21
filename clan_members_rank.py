@@ -2,9 +2,11 @@ from functools import cmp_to_key
 from multiprocessing import Pool
 
 from clash_royale_client import ClashRoyaleClient
-
+from common import schemas
 
 # NOTE: we want the highest level to come first (sort descending)
+
+
 def card_count_comparator(count1, count2):
     if count1 < count2:
         return 1
@@ -31,18 +33,16 @@ class ClanMembersRanker:
         self.pool_size = 50  # Using for I/O bound task (API requests)
         self.clash_royale_client = ClashRoyaleClient()
 
-    def get_card_level_counts(self, player_cards):
-        # TODO: split into card types, e.g.
-        # card_level_counts = { 13: { 'totalCount': 'spellCount': x, 'buildingCount': y, 'troopCount': z }, etc. }
-        # OR
-        # card_level_counts = { "totalCount": {13: 22, 12: 14, etc.}, "troopCount": {13: 12, 12: 10, etc.}, etc.}
+    def get_card_level_counts(self, player_cards, card_type_filter='all'):
         card_level_counts = {i: 0 for i in range(1, 14)}
 
         for card in player_cards:
             # At the beginning of time, maxLevel of legendaries used to be 5.
             # While the UI has updated that to 13, the data still has it relative to that maximum.
             card_level = 13 - (card['maxLevel'] - card['level'])
-            card_level_counts[card_level] += 1
+            card_type = schemas.CARD_TYPE_ID_PREFIX[str(card['id'])[:2]]
+            if card_type_filter == 'all' or card_type == card_type_filter:
+                card_level_counts[card_level] += 1
 
         return card_level_counts
 
@@ -61,7 +61,7 @@ class ClanMembersRanker:
         return members_info
 
     # pre-condition: clan_tag should not have # and all caps
-    def get_clan_cards_rank(self, clan_tag):
+    def get_clan_cards_rank(self, clan_tag, card_type_filter='all'):
         clan_info = self.clash_royale_client.get_clan_info(clan_tag)
         members_list = clan_info['memberList']
         members_info = self.get_all_player_info(members_list)
@@ -71,13 +71,14 @@ class ClanMembersRanker:
             member_card_levels = {
                 'tag': member['tag'],
                 'name': member['name'],
-                'card_level_counts': self.get_card_level_counts(member['cards'])
+                'card_level_counts': self.get_card_level_counts(member['cards'], card_type_filter)
             }
             member_cards_ranked.append(member_card_levels)
             # debugging
             # print(member_card_levels)
 
         # Rank members then return results
+        # TODO move the sorting to a function so that we can unit test just the storting on it's own lol
         member_cards_ranked.sort(key=cmp_to_key(compare_card_levels))
 
         return clan_info, member_cards_ranked
