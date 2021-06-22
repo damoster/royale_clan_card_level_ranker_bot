@@ -99,8 +99,8 @@ def main():
             description=dedent('''
                 Players ranked by number of cards they have at each level.
                 Comparison start at level 13 card count. Showing the top {} players.
-                Note that for clan wars 2.0 there can only be 15 players adding cards
-                for boat defenses.
+                Rank info displayed below is in this format:
+                Rank | lvl13 card count, lvl12 card count, lvl11 card count | Player Name
             '''.format(n)),
             colour=discord.Colour.blue()
         )
@@ -110,15 +110,14 @@ def main():
             icon_url='https://icon-library.net//images/clash-royale-icon/clash-royale-icon-8.jpg'
         )
 
-        rank_values = '\n'.join([str(i) for i in range(1, n + 1)])
-        name_values = '\n'.join([m['name'] for m in top_n])
-
-        card_level_counts = [member['card_level_counts'] for member in top_n]
-        card_count_values = '\n'.join(['{:3},{:3},{:3}'.format(m[13], m[12], m[11]) for m in card_level_counts])
-
-        embed.add_field(name='Rank', value=rank_values, inline=True)
-        embed.add_field(name='Name', value=name_values, inline=True)
-        embed.add_field(name='# of Level 13, 12, 11 cards', value=card_count_values, inline=True)
+        rank_values = []
+        for idx, member in enumerate(top_n):
+            mc = member['card_level_counts']
+            rank_text_row = '`#{:02d}` | `{:2d}, {:2d}, {:2d}` | **{}**'.format(
+                idx + 1, mc[13], mc[12], mc[11], member['name']
+            )
+            rank_values.append(rank_text_row)
+        embed.add_field(name='Ranks', value='\n'.join(rank_values), inline=False)
 
         return embed
 
