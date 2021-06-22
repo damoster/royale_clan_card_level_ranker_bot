@@ -99,8 +99,6 @@ def main():
             description=dedent('''
                 Players ranked by number of cards they have at each level.
                 Comparison start at level 13 card count. Showing the top {} players.
-                Rank info displayed below is in this format:
-                Rank | lvl13 card count, lvl12 card count, lvl11 card count | Player Name
             '''.format(n)),
             colour=discord.Colour.blue()
         )
@@ -113,11 +111,12 @@ def main():
         rank_values = []
         for idx, member in enumerate(top_n):
             mc = member['card_level_counts']
-            rank_text_row = '`#{:02d}` | `{:2d}, {:2d}, {:2d}` | **{}**'.format(
+            rank_text_row = '` {:02d} ` | `  {:2d}, {:2d}, {:2d}  ` | **{}**'.format(
                 idx + 1, mc[13], mc[12], mc[11], member['name']
             )
             rank_values.append(rank_text_row)
-        embed.add_field(name='Ranks', value='\n'.join(rank_values), inline=False)
+        field_name = '**Rank** | **# of lvl 13, 12, 11** | **Player Name**'
+        embed.add_field(name=field_name, value='\n'.join(rank_values), inline=False)
 
         return embed
 
