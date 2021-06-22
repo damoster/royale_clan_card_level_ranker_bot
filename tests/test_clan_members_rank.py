@@ -86,6 +86,33 @@ class TestClanMembersRanker(unittest.TestCase):
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
                          '#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
 
+    def test_get_clan_cards_rank_with_filter(self):
+        # teting the get_clan_cards_rank function with filter = troops
+        clan_members_rank = ClanMembersRanker()
+        clan_tag = "#S0M3CL4N"
+
+        # Mock API responses and certain function calls
+        when(clan_members_rank.clash_royale_client).get_clan_info(clan_tag).thenReturn(
+            clash_royale_client_responses.CLAN_INFO_API_RESPONSE
+        )
+        when(clan_members_rank).get_all_player_info(
+            clash_royale_client_responses.CLAN_INFO_API_RESPONSE['memberList']
+        ).thenReturn(
+            [
+                clash_royale_client_responses.PLAYER_1_RESPONSE,
+                clash_royale_client_responses.PLAYER_2_RESPONSE,
+                clash_royale_client_responses.PLAYER_3_RESPONSE
+            ]
+        )
+
+        # Expected sort order (in terms of card counts is player3, player1, player2)
+        clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
+            clan_tag, 'troops')
+        self.assertEqual(
+            clan_info, clash_royale_client_responses.CLAN_INFO_API_RESPONSE)
+        self.assertEqual([m['tag'] for m in member_cards_ranked], [
+                         '#YV9GU2VG', '#8VUG0GQRY', '#LYJVYUUUR'])
+
 
 if __name__ == '__main__':
     unittest.main()

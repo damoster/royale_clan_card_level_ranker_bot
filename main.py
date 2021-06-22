@@ -27,7 +27,8 @@ def setup_tokens():
     for env_var in expected_env_vars:
         if os.getenv(env_var) is None:
             raise ValueError(
-                '.env file is missing or {} has not been defined in the .env file'.format(env_var)
+                '.env file is missing or {} has not been defined in the .env file'.format(
+                    env_var)
             )
 
 
@@ -76,9 +77,34 @@ def main():
             card_type_arg = args[1].rstrip('s')
             valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
             if card_type_arg not in valid_arguments:
-                raise TypeError('Third argument is not in scope')
+                message = 'Second argument is not in scope, please provide the correct card filter: troops, spells, or buildings'
+                await ctx.send(embed=discord.Embed(
+                    description=message,
+                    colour=discord.Colour.red()
+                ))
+                return
         clan_tag = args[0]
 
+        await fetch_ranked_members(ctx, clan_tag, card_type_arg)
+
+    @ bot.command()
+    async def ausclan(ctx, *args):
+        card_type_arg = 'all'
+        if len(args) == 1:
+            card_type_arg = args[0].rstrip('s')
+            valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
+            if card_type_arg not in valid_arguments:
+                message = 'First argument is not in scope, please provide the correct card filter: troops, spells, or buildings'
+                await ctx.send(embed=discord.Embed(
+                    description=message,
+                    colour=discord.Colour.red()
+                ))
+                return
+        async with ctx.typing():
+            # TODO: might want some try catch before sending result in case API requests fail or something...
+            await fetch_ranked_members(ctx, '9GULPJ9L', card_type_arg)
+
+    async def fetch_ranked_members(ctx, clan_tag, card_type_arg='all'):
         async with ctx.typing():
             # TODO: might want some try catch before sending result in case API requests fail or something...
             print("Started fetch ranked members processing...")
@@ -86,21 +112,9 @@ def main():
                 clan_tag, card_type_arg)
             print("Completed fetch ranked members processing")
 
-        await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked))
+        await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg))
 
-    # Command specifically for AUSCLAN so they don't have to remember commands / clan_tag
-    @ bot.command()
-    async def ausclan(ctx):
-        async with ctx.typing():
-            # TODO: might want some try catch before sending result in case API requests fail or something...
-            print("Started fetch ranked members processing...")
-            clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(
-                "9GULPJ9L")
-            print("Completed fetch ranked members processing")
-
-        await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked))
-
-    def create_clan_members_ranked_embed(clan_info, clan_members_ranked):
+    def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
         n = 20  # Number of players to show
         top_n = clan_members_ranked[:n]
 
@@ -111,7 +125,8 @@ def main():
                 Comparison start at level 13 card count. Showing the top **{}** players.
                 Note that for clan wars 2.0 there can only be 15 players adding cards
                 for boat defenses.
-            '''.format(n)),
+                Filter Type: **{}**
+            '''.format(n, card_type_arg)),
             colour=discord.Colour.blue()
         )
 
