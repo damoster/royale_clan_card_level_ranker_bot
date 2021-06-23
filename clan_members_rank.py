@@ -1,6 +1,6 @@
+import copy
 from functools import cmp_to_key
 from multiprocessing import Pool
-import copy
 
 from clash_royale_client import ClashRoyaleClient
 from common import schemas
@@ -38,7 +38,8 @@ class ClanMembersRanker:
         valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
         if card_type_filter not in valid_arguments and card_type_filter not in 'all':
             raise ValueError(
-                "function must have valid card types: all (defualt), troop, building, or spell")
+                "function must have valid card types: 'all' (defualt), 'troop', 'building', or 'spell'"
+            )
         card_level_counts = {i: 0 for i in range(1, 14)}
 
         for card in player_cards:
@@ -87,7 +88,6 @@ class ClanMembersRanker:
             # print(member_card_levels)
 
         # Rank members then return results
-        # TODO move the sorting to a function so that we can unit test just the storting on it's own lol
         member_cards_ranked = self.sort_list_by_card_level(member_cards_ranked)
 
         return clan_info, member_cards_ranked

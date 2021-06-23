@@ -125,7 +125,7 @@ def main():
                 Comparison start at level 13 card count. Showing the top **{}** players.
                 Note that for clan wars 2.0 there can only be 15 players adding cards
                 for boat defenses.
-                Filter Type: **{}**
+                Card Count Filter Type: **{}**
             '''.format(n, card_type_arg)),
             colour=discord.Colour.blue()
         )

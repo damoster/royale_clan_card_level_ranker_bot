@@ -56,10 +56,10 @@ class TestClanMembersRanker(unittest.TestCase):
         filtered_building_expected_card_level_counts = {
             1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 1, 7: 0, 8: 0, 9: 1, 10: 6, 11: 2, 12: 2, 13: 1}
 
-        filtered_troop_expected_card_level_counts_p1 = {1: 1, 2: 0, 3: 0, 4: 1, 5: 0,
-                                                        6: 0, 7: 12, 8: 3, 9: 5, 10: 4, 11: 17, 12: 11, 13: 17}
-        filtered_spell_expected_card_level_counts_p1 = {1: 1, 2: 0, 3: 0, 4: 0, 5: 0,
-                                                        6: 0, 7: 7, 8: 0, 9: 4, 10: 1, 11: 5, 12: 1, 13: 0}
+        filtered_troop_expected_card_level_counts_p1 = {
+            1: 1, 2: 0, 3: 0, 4: 1, 5: 0, 6: 0, 7: 12, 8: 3, 9: 5, 10: 4, 11: 17, 12: 11, 13: 17}
+        filtered_spell_expected_card_level_counts_p1 = {
+            1: 1, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 7, 8: 0, 9: 4, 10: 1, 11: 5, 12: 1, 13: 0}
 
         player_2_cards = clash_royale_client_responses.PLAYER_2_RESPONSE['cards']
         player_1_cards = clash_royale_client_responses.PLAYER_1_RESPONSE['cards']
@@ -98,7 +98,8 @@ class TestClanMembersRanker(unittest.TestCase):
             card_level_counts = clan_members_rank.get_card_level_counts(
                 player_2_cards, 'randomString')
             self.assertTrue(
-                'function must have valid card types: all (defualt), troops, buildings, or spells' in contect.exception)
+                "function must have valid card types: 'all' (defualt), 'troop', 'building', or 'spell'"
+                in contect.exception)
 
         # Reason to test out on Player 1 is to check the correctness of the ranking for test_get_clan_cards_rank assertion
         # 6. Player 1 troop test
@@ -132,7 +133,7 @@ class TestClanMembersRanker(unittest.TestCase):
             ]
         )
 
-        # Expected sort order (in terms of card counts is player3, player1, player2)
+        # 1. Expected sort order (in terms of card counts is player3, player1, player2)
         clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
             clan_tag)
         self.assertEqual(
@@ -140,26 +141,25 @@ class TestClanMembersRanker(unittest.TestCase):
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
                          '#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
 
-        # TODO Check why the following test passes even though the order is not correct
-        # Card Type Filter Test with 'troop' - Expected sort order (in terms of card counts is player1, player2, player3)
+        # 2. Card Type Filter Test with 'troop' - Expected sort order (in terms of card counts is player1, player2, player3)
         clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
             clan_tag, 'troop')
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
                          '#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
 
-        # Card Type Filter Test with 'spell' - Expected sort order (in terms of card counts is player1, player2, player3)
+        # 3. Card Type Filter Test with 'spell' - Expected sort order (in terms of card counts is player1, player2, player3)
         clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
             clan_tag, card_type_filter='spell')
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
                          '#LYJVYUUUR', '#8VUG0GQRY', '#YV9GU2VG'])
 
-        # Card Type Filter Test with 'building' - Expected sort order (in terms of card counts is player1, player2, player3)
+        # 4. Card Type Filter Test with 'building' - Expected sort order (in terms of card counts is player1, player2, player3)
         clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
             clan_tag, card_type_filter='building')
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
                          '#LYJVYUUUR', '#8VUG0GQRY', '#YV9GU2VG'])
 
-        # Card Type Filter Test with Invalid input
+        # 5. Card Type Filter Test with Invalid input
         with self.assertRaises(ValueError) as contect:
             clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
                 clan_tag, card_type_filter='randomstring')
