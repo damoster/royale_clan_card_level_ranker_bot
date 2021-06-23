@@ -121,8 +121,8 @@ def main():
 
         embed = discord.Embed(
             description=dedent('''
-                Players ranked by number of cards they have at each level.
-                Comparison start at level 13 card count. Showing the top **{}** players.
+                Players ranked by number of cards they have at each level. Comparison start at level 13 card count.
+                Showing the top **{}** players.
                 Card Count Filter Type: **{}**
             '''.format(n, card_type_arg)),
             colour=discord.Colour.blue()
