@@ -94,12 +94,12 @@ class TestClanMembersRanker(unittest.TestCase):
                          filtered_building_expected_card_level_counts)
 
         # 5. Invalid filter test
-        with self.assertRaises(ValueError) as contect:
+        with self.assertRaises(ValueError) as context:
             card_level_counts = clan_members_rank.get_card_level_counts(
                 player_2_cards, 'randomString')
             self.assertTrue(
                 "function must have valid card types: 'all' (defualt), 'troop', 'building', or 'spell'"
-                in contect.exception)
+                in context.exception)
 
         # Reason to test out on Player 1 is to check the correctness of the ranking for test_get_clan_cards_rank assertion
         # 6. Player 1 troop test
@@ -160,11 +160,11 @@ class TestClanMembersRanker(unittest.TestCase):
                          '#LYJVYUUUR', '#8VUG0GQRY', '#YV9GU2VG'])
 
         # 5. Card Type Filter Test with Invalid input
-        with self.assertRaises(ValueError) as contect:
+        with self.assertRaises(ValueError) as context:
             clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
                 clan_tag, card_type_filter='randomstring')
             self.assertTrue(
-                'function must have valid card types: all (defualt), troops, buildings, or spells' in contect.exception)
+                'function must have valid card types: all (defualt), troops, buildings, or spells' in context.exception)
 
 
 if __name__ == '__main__':
