@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from textwrap import dedent
 
 from clan_members_rank import ClanMembersRanker
+from common import schemas
 
 
 def setup_tokens():
@@ -26,7 +27,8 @@ def setup_tokens():
     for env_var in expected_env_vars:
         if os.getenv(env_var) is None:
             raise ValueError(
-                '.env file is missing or {} has not been defined in the .env file'.format(env_var)
+                '.env file is missing or {} has not been defined in the .env file'.format(
+                    env_var)
             )
 
 
@@ -66,42 +68,65 @@ def main():
 
     @bot.command()
     async def membercardsranked(ctx, *args):
-        invalid_cmd_reply = 'Please provide a clan tag. E.g.\n`!membercardsranked 9GULPJ9L`'
+        card_type_arg = 'all'
         if len(args) == 0:
+            invalid_cmd_reply = 'Please provide a clan tag. E.g.\n`!membercardsranked 9GULPJ9L`'
             await ctx.send(invalid_cmd_reply)
             return
+        elif len(args) == 2:
+            card_type_arg = args[1].lower().rstrip('s')
+            check_result = await card_type_check(ctx, card_type_arg)
+            if check_result is not True:
+                return
         clan_tag = args[0]
 
+        await fetch_ranked_members(ctx, clan_tag, card_type_arg)
+
+    @ bot.command()
+    async def ausclan(ctx, *args):
+        card_type_arg = 'all'
+        if len(args) == 1:
+            card_type_arg = args[0].lower().rstrip('s')
+            check_result = await card_type_check(ctx, card_type_arg)
+            if check_result is not True:
+                return
+
+        await fetch_ranked_members(ctx, '9GULPJ9L', card_type_arg)
+
+    async def fetch_ranked_members(ctx, clan_tag, card_type_arg='all'):
         async with ctx.typing():
             # TODO: might want some try catch before sending result in case API requests fail or something...
             print("Started fetch ranked members processing...")
-            clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(clan_tag)
+            clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(
+                clan_tag, card_type_arg)
             print("Completed fetch ranked members processing")
 
-        await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked))
+        await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg))
 
-    # Command specifically for AUSCLAN so they don't have to remember commands / clan_tag
-    @bot.command()
-    async def ausclan(ctx):
-        async with ctx.typing():
-            # TODO: might want some try catch before sending result in case API requests fail or something...
-            print("Started fetch ranked members processing...")
-            clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank("9GULPJ9L")
-            print("Completed fetch ranked members processing")
+    async def card_type_check(ctx, card_type):
+        valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
+        if card_type not in valid_arguments:
+            message = 'Card Filter parameter is not in scope, please provide correct card filter: troops, spells, or buildings'
+            await ctx.send(embed=discord.Embed(
+                description=message,
+                colour=discord.Colour.red()
+            ))
+            return False
+        else:
+            return True
 
-        await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked))
-
-    def create_clan_members_ranked_embed(clan_info, clan_members_ranked):
+    def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
         n = 20  # Number of players to show
         top_n = clan_members_ranked[:n]
 
         embed = discord.Embed(
             description=dedent('''
                 Players ranked by number of cards they have at each level.
-                Comparison start at level 13 card count. Showing the top {} players.
+                Comparison start at level 13 card count. Showing the top **{}** players.
                 Note that for clan wars 2.0 there can only be 15 players adding cards
                 for boat defenses.
-            '''.format(n)),
+                Card Count Filter Type: **{}**
+            '''.format(n, card_type_arg)),
             colour=discord.Colour.blue()
         )
 
@@ -114,11 +139,13 @@ def main():
         name_values = '\n'.join([m['name'] for m in top_n])
 
         card_level_counts = [member['card_level_counts'] for member in top_n]
-        card_count_values = '\n'.join(['{:3},{:3},{:3}'.format(m[13], m[12], m[11]) for m in card_level_counts])
+        card_count_values = '\n'.join(['{:3},{:3},{:3}'.format(
+            m[13], m[12], m[11]) for m in card_level_counts])
 
         embed.add_field(name='Rank', value=rank_values, inline=True)
         embed.add_field(name='Name', value=name_values, inline=True)
-        embed.add_field(name='# of Level 13, 12, 11 cards', value=card_count_values, inline=True)
+        embed.add_field(name='# of Level 13, 12, 11 cards',
+                        value=card_count_values, inline=True)
 
         return embed
 
