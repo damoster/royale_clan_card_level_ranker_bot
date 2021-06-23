@@ -68,20 +68,15 @@ def main():
 
     @bot.command()
     async def membercardsranked(ctx, *args):
-        invalid_cmd_reply = 'Please provide a clan tag. E.g.\n`!membercardsranked 9GULPJ9L`'
         card_type_arg = 'all'
         if len(args) == 0:
+            invalid_cmd_reply = 'Please provide a clan tag. E.g.\n`!membercardsranked 9GULPJ9L`'
             await ctx.send(invalid_cmd_reply)
             return
         elif len(args) == 2:
-            card_type_arg = args[1].rstrip('s')
-            valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
-            if card_type_arg not in valid_arguments:
-                message = 'Second argument is not in scope, please provide the correct card filter: troops, spells, or buildings'
-                await ctx.send(embed=discord.Embed(
-                    description=message,
-                    colour=discord.Colour.red()
-                ))
+            card_type_arg = args[1].lower().rstrip('s')
+            check_result = await card_type_check(ctx, card_type_arg)
+            if check_result is not True:
                 return
         clan_tag = args[0]
 
@@ -91,18 +86,12 @@ def main():
     async def ausclan(ctx, *args):
         card_type_arg = 'all'
         if len(args) == 1:
-            card_type_arg = args[0].rstrip('s')
-            valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
-            if card_type_arg not in valid_arguments:
-                message = 'First argument is not in scope, please provide the correct card filter: troops, spells, or buildings'
-                await ctx.send(embed=discord.Embed(
-                    description=message,
-                    colour=discord.Colour.red()
-                ))
+            card_type_arg = args[0].lower().rstrip('s')
+            check_result = await card_type_check(ctx, card_type_arg)
+            if check_result is not True:
                 return
-        async with ctx.typing():
-            # TODO: might want some try catch before sending result in case API requests fail or something...
-            await fetch_ranked_members(ctx, '9GULPJ9L', card_type_arg)
+
+        await fetch_ranked_members(ctx, '9GULPJ9L', card_type_arg)
 
     async def fetch_ranked_members(ctx, clan_tag, card_type_arg='all'):
         async with ctx.typing():
@@ -114,11 +103,22 @@ def main():
 
         await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg))
 
+    async def card_type_check(ctx, card_type):
+        valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
+        if card_type not in valid_arguments:
+            message = 'Card Filter parameter is not in scope, please provide correct card filter: troops, spells, or buildings'
+            await ctx.send(embed=discord.Embed(
+                description=message,
+                colour=discord.Colour.red()
+            ))
+            return False
+        else:
+            return True
+
     def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
         n = 20  # Number of players to show
         top_n = clan_members_ranked[:n]
 
-        # TODO: Add a field or update description to indicate what filter is being used, bold it using markdown e.g. **filter_type**
         embed = discord.Embed(
             description=dedent('''
                 Players ranked by number of cards they have at each level.
