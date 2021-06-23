@@ -10,7 +10,7 @@ clean:
 init:
 	$(PIP) install -Ur requirements.txt
 
-run:
+run: clean
 	$(PYTHON) main.py
 
 # Development
