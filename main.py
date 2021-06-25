@@ -171,6 +171,11 @@ def main():
             colour=discord.Colour.blue()
         )
 
+        embed.set_author(
+            name=clan_name,
+            icon_url='https://icon-library.net//images/clash-royale-icon/clash-royale-icon-8.jpg'
+        )
+
         rank_values = []
         for idx, member in enumerate(top_n):
             mc = member['card_level_counts']
