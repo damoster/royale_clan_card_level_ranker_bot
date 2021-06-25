@@ -9,6 +9,7 @@ from textwrap import dedent
 
 from clan_members_rank import ClanMembersRanker
 from common import schemas
+from royale_api_website_scraper import RoyaleApiWebsiteScraper
 
 
 def setup_tokens():
@@ -36,6 +37,7 @@ def main():
     setup_tokens()
 
     clan_members_ranker = ClanMembersRanker()
+    royale_api_website_scraper = RoyaleApiWebsiteScraper()
     bot = Bot("!")
 
     @bot.event
@@ -95,7 +97,6 @@ def main():
 
     async def fetch_ranked_members(ctx, clan_tag, card_type_arg='all'):
         async with ctx.typing():
-            # TODO: might want some try catch before sending result in case API requests fail or something...
             print("Started fetch ranked members processing...")
             clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(
                 clan_tag, card_type_arg)
@@ -115,6 +116,48 @@ def main():
         else:
             return True
 
+    @bot.command()
+    async def boatattack(ctx, clan_tag):
+        async with ctx.typing():
+            embed = boat_attackers_embed(
+                royale_api_website_scraper.get_player_table(clan_tag),
+                'Unknown' # TODO could get clan name from webscraper
+            )
+        await ctx.send(embed=embed)
+
+    @bot.command()
+    async def ausclanboat(ctx):
+        async with ctx.typing():
+            embed = boat_attackers_embed(
+                royale_api_website_scraper.get_player_table('9GULPJ9L'),
+                'AUSCLAN'
+            )
+        await ctx.send(embed=embed)
+
+    def boat_attackers_embed(boat_attackers, clan_name):
+        if len(boat_attackers) == 0:
+            description = 'There are no clan members who attacked enemy boats this week.'
+        else:
+            description = f'**{len(boat_attackers)}** player(s) who attacked enemy boats this week.'
+        embed = discord.Embed(description=description, colour=discord.Colour.blue())
+
+        embed.set_author(
+            name=clan_name,
+            icon_url='https://icon-library.net//images/clash-royale-icon/clash-royale-icon-8.jpg'
+        )
+
+        if len(boat_attackers) != 0:
+            columns = 'Boat attacks | Medals | Name'
+            row_values = []
+            for p in boat_attackers:
+                row_val = '`     {:^2}    `|`  {:^4} `| {}'.format(
+                    p[5], p[6], p[1]
+                )
+                row_values.append(row_val)
+            embed.add_field(name=columns, value='\n'.join(row_values), inline=False)
+
+        return embed
+
     def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
         n = 20  # Number of players to show
         top_n = clan_members_ranked[:n]
@@ -126,11 +169,6 @@ def main():
                 Card Count Filter Type: **{}**
             '''.format(n, card_type_arg)),
             colour=discord.Colour.blue()
-        )
-
-        embed.set_author(
-            name=clan_info['name'],
-            icon_url='https://icon-library.net//images/clash-royale-icon/clash-royale-icon-8.jpg'
         )
 
         rank_values = []
