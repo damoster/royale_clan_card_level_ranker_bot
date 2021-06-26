@@ -1,8 +1,16 @@
 import re
+import socket
+from collections import OrderedDict
 
-import cloudscraper # Not sure if will work
 import requests
 from bs4 import BeautifulSoup
+from requests.packages import urllib3
+
+
+# To hide warning about:
+# InsecureRequestWarning: Unverified HTTPS request is being made to host 'royaleapi.com'. Adding certificate verification
+# is strongly advised. See: https://urllib3.readthedocs.io/en/latest/advanced-usage.html#ssl-warnings
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class RoyaleApiWebsiteScraper:
@@ -10,12 +18,22 @@ class RoyaleApiWebsiteScraper:
         self.soup = BeautifulSoup()
 
     def get_html_soup(self, url):
-        # response = requests.get(url)
-        # Trying with cloudFlare scraper
-        # scraper = cloudscraper.create_scraper()
-        scraper = cloudscraper.CloudScraper()
-        response = scraper.get(url)
-        print(response.text)
+        # Followed approach here to avoid Cloudflare captcha / cookie / JS check
+        # "...can now bypass the cloudflare block using requests 
+        # as long as we connect directly to the host IP rather than the domain name..."
+        # https://stackoverflow.com/questions/62684468/pythons-requests-triggers-cloudflares-security-while-urllib-does-not
+
+        answers = socket.getaddrinfo('royaleapi.com', 443)
+        (family, type, proto, canonname, (address, port, _, _)) = answers[0]
+        headers = OrderedDict({
+            'Host': "royaleapi.com",
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+        })
+        s = requests.Session()
+        s.headers = headers
+        response = s.get(url, verify=False)
+        response.close()  # Close connection to the server
+
         if response.status_code == 200:
             return BeautifulSoup(response.text, 'html.parser')
         else:
@@ -23,15 +41,9 @@ class RoyaleApiWebsiteScraper:
                 f'Encounter a problem with royaleAPI.com. Status code: [{response.status_code}]'
             )
 
-    def get_test_html(self):
-        with open('temp.html') as fp:
-            return BeautifulSoup(fp, 'html.parser')
-
-    def get_player_table(self, clan_tag):
+    def get_war_participation_table(self, clan_tag):
         clan_tag = clan_tag.replace('#', '').upper()
         request_url = f'https://royaleapi.com/clan/{clan_tag}/war/race'
-        # For now just load from the file and test so we don't get DDOS-ed lol
-        # soup = self.get_test_html()
         soup = self.get_html_soup(request_url)
 
         data = []
@@ -47,13 +59,8 @@ class RoyaleApiWebsiteScraper:
             # Rank, Name, Role, DecksUsedToday, TotalDecksUsed, BoatAttacks, Medal
             if len(all_cols) != 7:
                 raise ValueError('Structure of Table being webscraped has changed, no longer in expected format')
-            data.append(all_cols) # Get rid of empty values
-        
+            data.append(all_cols)  # Get rid of empty values
+
         boat_attackers = [p for p in data if int(p[5]) > 0]
 
         return boat_attackers
-
-
-# cave man testing
-# scraper = RoyaleApiWebsiteScraper()
-# scraper.get_player_table('9GULPJ9L')
