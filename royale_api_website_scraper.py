@@ -19,12 +19,7 @@ class RoyaleApiWebsiteScraper:
 
     def get_html_soup(self, url):
         # Followed approach here to avoid Cloudflare captcha / cookie / JS check
-        # "...can now bypass the cloudflare block using requests
-        # as long as we connect directly to the host IP rather than the domain name..."
         # https://stackoverflow.com/questions/62684468/pythons-requests-triggers-cloudflares-security-while-urllib-does-not
-
-        answers = socket.getaddrinfo('royaleapi.com', 443)
-        (family, type, proto, canonname, (address, port, _, _)) = answers[0]
         headers = OrderedDict({
             'Host': "royaleapi.com",
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
