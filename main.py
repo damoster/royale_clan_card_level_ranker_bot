@@ -72,7 +72,7 @@ def main():
             )
             url = 'https://royaleapi.com/clan/9GULPJ9L/war/race'
             ausclan_cmds = [
-                f'[!ausclan \[filter\]]({url}) - Shows clan members ranked by number of high level cards they have. [filter] '
+                f'[!ausclan [filter]]({url}) - Shows clan members ranked by number of high level cards they have. [filter] '
                 'can be one of \'all\', \'troop\', \'spell\' or \'building\'. Defaults to \'all\' if not specified',
                 f'[!ausclanboat]({url}) - Lists clan members who attacked enemy boats this week.',
             ]
