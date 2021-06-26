@@ -1,6 +1,5 @@
 import os
 
-import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
@@ -63,10 +62,28 @@ def main():
 
     # Discord bot commands
     @bot.command()
-    async def marco(ctx):
+    async def bothelp(ctx):
         async with ctx.typing():
-            await asyncio.sleep(0.5)
-        await ctx.send('Polo! Bot is up and running!')
+            embed = discord.Embed(
+                description=dedent('''
+                This bot provides a variety of useful commands to help with clan management.
+                '''),
+                colour=discord.Colour.purple()
+            )
+            ausclan_cmds = [
+                '**`!ausclan [filter]`** - Shows clan members ranked by number of high level cards they have. [filter] '
+                'can be one of \'all\', \'troop\', \'spell\' or \'building\'. Defaults to \'all\' if not specified',
+                '**`!ausclanboat`** - Lists clan members who attacked enemy boats this week.',
+            ]
+            generic_cmds = [
+                '**`!bothelp`** - Shows this help message about available commands.',
+                '**`!membercardsranked [clan_tag] [filter]`** - Does the same thing as `!ausclan` but '
+                'for the specific [clan_tag] instead.',
+                '**`!boatattack [clan_tag]`** - Does the same thing as `!ausclanboat` but for the specific [clan_tag] instead.'
+            ]
+            embed.add_field(name='Ausclan commands', value='\n\n'.join(ausclan_cmds), inline=False)
+            embed.add_field(name='Other commands', value='\n\n'.join(generic_cmds), inline=False)
+        await ctx.send(embed=embed)
 
     @bot.command()
     async def membercardsranked(ctx, *args):
