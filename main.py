@@ -121,32 +121,24 @@ def main():
     @bot.command()
     async def boatattack(ctx, clan_tag):
         async with ctx.typing():
-            embed = boat_attackers_embed(
-                royale_api_website_scraper.get_war_participation_table(clan_tag),
-                'Unknown'  # TODO could get clan name from webscraper
-            )
+            clan_info, war_partitipation_table = royale_api_website_scraper.get_war_participation_table(clan_tag)
+            embed = boat_attackers_embed(war_partitipation_table, clan_info)
         await ctx.send(embed=embed)
 
     @bot.command()
     async def ausclanboat(ctx):
-        async with ctx.typing():
-            embed = boat_attackers_embed(
-                royale_api_website_scraper.get_war_participation_table('9GULPJ9L'),
-                'AUSCLAN'
-            )
-        await ctx.send(embed=embed)
+        await boatattack(ctx, '9GULPJ9L')
 
-    def boat_attackers_embed(boat_attackers, clan_name):
+    def boat_attackers_embed(boat_attackers, clan_info):
         if len(boat_attackers) == 0:
             description = 'There are no clan members who attacked enemy boats this week.'
+            colour = discord.Colour.blue()
         else:
-            description = f'**{len(boat_attackers)}** player(s) who attacked enemy boats this week.'
-        embed = discord.Embed(description=description, colour=discord.Colour.blue())
+            description = f'**{len(boat_attackers)}** player(s) attacked enemy boats this week.'
+            colour = discord.Colour.orange()
 
-        embed.set_author(
-            name=clan_name,
-            icon_url='https://icon-library.net//images/clash-royale-icon/clash-royale-icon-8.jpg'
-        )
+        embed = discord.Embed(description=description, colour=colour)
+        embed.set_author(name=clan_info['name'], icon_url=clan_info['logo_url'])
 
         if len(boat_attackers) != 0:
             columns = 'Boat attacks | Medals | Name'

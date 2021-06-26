@@ -19,7 +19,7 @@ class RoyaleApiWebsiteScraper:
 
     def get_html_soup(self, url):
         # Followed approach here to avoid Cloudflare captcha / cookie / JS check
-        # "...can now bypass the cloudflare block using requests 
+        # "...can now bypass the cloudflare block using requests
         # as long as we connect directly to the host IP rather than the domain name..."
         # https://stackoverflow.com/questions/62684468/pythons-requests-triggers-cloudflares-security-while-urllib-does-not
 
@@ -63,4 +63,7 @@ class RoyaleApiWebsiteScraper:
 
         boat_attackers = [p for p in data if int(p[5]) > 0]
 
-        return boat_attackers
+        clan_logo = soup.find('a', {'class': 'active_clan'}).find('div',{'class': 'badge'}).find('img')['src']
+        clan_name = re.split(f' *#{clan_tag}', soup.find('title').string)[0]
+        clan_info = {'name': clan_name, 'tag': f'#{clan_tag}', 'logo_url': clan_logo}
+        return clan_info, boat_attackers
