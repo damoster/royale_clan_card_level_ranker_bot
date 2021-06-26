@@ -96,7 +96,6 @@ def main():
         await fetch_ranked_members(ctx, '9GULPJ9L', card_type_arg)
 
     async def fetch_ranked_members(ctx, clan_tag, card_type_arg='all'):
-        print("we here lads")
         async with ctx.typing():
             print("Started fetch ranked members processing...")
             clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(
@@ -106,7 +105,6 @@ def main():
         await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg))
 
     async def card_type_check(ctx, card_type):
-        print("nani")
         valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
         if card_type not in valid_arguments:
             message = 'Card Filter parameter is not in scope, please provide correct card filter: troops, spells, or buildings'
