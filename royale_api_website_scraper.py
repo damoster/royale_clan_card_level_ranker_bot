@@ -1,5 +1,4 @@
 import re
-import socket
 from collections import OrderedDict
 
 import requests
@@ -58,7 +57,7 @@ class RoyaleApiWebsiteScraper:
 
         boat_attackers = [p for p in data if int(p[5]) > 0]
 
-        clan_logo = soup.find('a', {'class': 'active_clan'}).find('div',{'class': 'badge'}).find('img')['src']
+        clan_logo = soup.find('a', {'class': 'active_clan'}).find('div', {'class': 'badge'}).find('img')['src']
         clan_name = re.split(f' *#{clan_tag}', soup.find('title').string)[0]
         clan_info = {'name': clan_name, 'tag': f'#{clan_tag}', 'logo_url': clan_logo}
         return clan_info, boat_attackers
