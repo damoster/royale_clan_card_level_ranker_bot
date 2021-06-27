@@ -37,7 +37,8 @@ def main():
 
     clan_members_ranker = ClanMembersRanker()
     royale_api_website_scraper = RoyaleApiWebsiteScraper()
-    bot = Bot("!")
+    activity = discord.Game(name="!bothelp")
+    bot = Bot("!", activity=activity)
 
     @bot.event
     async def on_ready():
