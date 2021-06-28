@@ -53,7 +53,6 @@ class ClanMembersRanker:
         return card_level_counts
 
     def get_player_info(self, player_tag):
-        # Debugging
         # print('Getting player info for {}'.format(player_tag))
         # This endpoint takes around 1s per request
         return self.clash_royale_client.get_player_info(player_tag)
