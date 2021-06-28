@@ -35,7 +35,7 @@ def setup_tokens():
             )
 
 
-def setup_logging(logging_level=logging.ERROR):
+def setup_logging(logging_level=logging.WARNING):
     # Create logging folder path if doesn't exist
     logging_directory = "./logs/"
     if not os.path.exists(logging_directory):
@@ -60,7 +60,7 @@ def main():
     setup_tokens()
 
     # To enable logging on INFO level, logging_level=logging.INFO. Default is ERROR
-    setup_logging(logging_level=logging.INFO)
+    setup_logging(logging_level=logging.WARNING)
     clan_members_ranker = ClanMembersRanker()
     royale_api_website_scraper = RoyaleApiWebsiteScraper()
     activity = discord.Game(name="!bothelp")
@@ -68,6 +68,7 @@ def main():
 
     @bot.event
     async def on_ready():
+        print(f'Bot is up and ready. We have logged in as {bot.user}')
         logging.info(f'Bot is up and ready. We have logged in as {bot.user}')
 
     @bot.event
@@ -78,7 +79,7 @@ def main():
             return  # Return because we don't want to log an error for every command not found
         else:
             message = "Oh no! Something went wrong while running the command!"
-         # if there are errors not handled above, raise the error and log it
+            # if there are errors not handled above, raise the error and log it
             error = getattr(exc, 'original', exc)
             lines = ''.join(traceback.format_exception(
                 error.__class__, error, error.__traceback__))
