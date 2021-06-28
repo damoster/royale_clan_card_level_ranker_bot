@@ -1,7 +1,7 @@
 import os
-import logging
-from logging.handlers import TimedRotatingFileHandler
+
 import discord
+import logging
 import traceback
 from discord.ext import commands
 from discord.ext.commands import Bot
@@ -12,6 +12,7 @@ from clan_members_rank import ClanMembersRanker
 from common import schemas
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
 
+from logging.handlers import TimedRotatingFileHandler
 
 def setup_tokens():
     expected_env_vars = [
@@ -58,7 +59,7 @@ def setup_logging(logging_level=logging.ERROR):
 def main():
     setup_tokens()
 
-    # Note: to enable logging on info level, input as a parameter in setup_logging
+    # To enable logging on INFO level, logging_level=logging.INFO. Default is ERROR
     setup_logging(logging_level=logging.INFO)
     clan_members_ranker = ClanMembersRanker()
     royale_api_website_scraper = RoyaleApiWebsiteScraper()
@@ -72,8 +73,9 @@ def main():
     @bot.event
     async def on_command_error(ctx, exc: Exception):
         if isinstance(exc, commands.CommandNotFound):
-            # making this an info log so that it won't be stored in the logs
-            return  # Return because we don't want to show an error for every command not found
+            # store as info log so we know what people are trying to type into the bot
+            logging.info(exc)
+            return  # Return because we don't want to log an error for every command not found
         else:
             message = "Oh no! Something went wrong while running the command!"
          # if there are errors not handled above, raise the error and log it
