@@ -14,6 +14,7 @@ from royale_api_website_scraper import RoyaleApiWebsiteScraper
 
 from logging.handlers import TimedRotatingFileHandler
 
+
 def setup_tokens():
     expected_env_vars = [
         'DISCORD_BOT_TOKEN',
@@ -60,7 +61,7 @@ def main():
     setup_tokens()
 
     # To enable logging on INFO level, logging_level=logging.INFO. Default is ERROR
-    setup_logging(logging_level=logging.WARNING)
+    setup_logging(logging_level=logging.INFO)
     clan_members_ranker = ClanMembersRanker()
     royale_api_website_scraper = RoyaleApiWebsiteScraper()
     activity = discord.Game(name="!bothelp")
