@@ -1,6 +1,8 @@
 import os
 
 import discord
+import logging
+import traceback
 from discord.ext import commands
 from discord.ext.commands import Bot
 from dotenv import load_dotenv
@@ -9,6 +11,8 @@ from textwrap import dedent
 from clan_members_rank import ClanMembersRanker
 from common import schemas
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
+
+from logging.handlers import TimedRotatingFileHandler
 
 
 def setup_tokens():
@@ -20,7 +24,7 @@ def setup_tokens():
     for env_var in expected_env_vars:
         if os.getenv(env_var) is not None:
             del os.environ[env_var]
-            print('Refreshed environment variable: {}'.format(env_var))
+            logging.info('Refreshed environment variable: {}'.format(env_var))
 
     # Load environment variables saved in .env file
     load_dotenv()
@@ -32,9 +36,32 @@ def setup_tokens():
             )
 
 
+def setup_logging(logging_level=logging.WARNING):
+    # Create logging folder path if doesn't exist
+    logging_directory = "./logs/"
+    if not os.path.exists(logging_directory):
+        os.makedirs(logging_directory)
+
+    logFormatter = logging.Formatter(
+        "%(asctime)s - [%(threadName)s] - [%(levelname)s] - [%(name)s] - %(message)s")
+    rootLogger = logging.getLogger()
+    rootLogger.setLevel(logging_level)
+    # TimedRotating FileHandler
+    timedRotatingFileHandler = TimedRotatingFileHandler(
+        logging_directory + "system_logs.log", when="w0", interval=1)
+    timedRotatingFileHandler.setFormatter(logFormatter)
+    rootLogger.addHandler(timedRotatingFileHandler)
+    # Writes logs to sys.sterr
+    consoleHandler = logging.StreamHandler()
+    consoleHandler.setFormatter(logFormatter)
+    rootLogger.addHandler(consoleHandler)
+
+
 def main():
     setup_tokens()
 
+    # To enable logging on INFO level, logging_level=logging.INFO. Default is ERROR
+    setup_logging(logging_level=logging.INFO)
     clan_members_ranker = ClanMembersRanker()
     royale_api_website_scraper = RoyaleApiWebsiteScraper()
     activity = discord.Game(name="!bothelp")
@@ -42,16 +69,22 @@ def main():
 
     @bot.event
     async def on_ready():
-        print('Bot is up and ready. We have logged in as {0.user}'.format(bot))
+        print(f'Bot is up and ready. We have logged in as {bot.user}')
+        logging.info(f'Bot is up and ready. We have logged in as {bot.user}')
 
     @bot.event
-    async def on_command_error(ctx, error):
-        # Change print statement to logging instead later on
-        print(error)
-        if isinstance(error, commands.CommandNotFound):
-            return  # Return because we don't want to show an error for every command not found
+    async def on_command_error(ctx, exc: Exception):
+        if isinstance(exc, commands.CommandNotFound):
+            # store as info log so we know what people are trying to type into the bot
+            logging.info(exc)
+            return  # Return because we don't want to log an error for every command not found
         else:
             message = "Oh no! Something went wrong while running the command!"
+            # if there are errors not handled above, raise the error and log it
+            error = getattr(exc, 'original', exc)
+            lines = ''.join(traceback.format_exception(
+                error.__class__, error, error.__traceback__))
+            logging.error(lines)
 
         await ctx.send(embed=discord.Embed(
             description=message,
@@ -116,10 +149,10 @@ def main():
 
     async def fetch_ranked_members(ctx, clan_tag, card_type_arg='all'):
         async with ctx.typing():
-            print("Started fetch ranked members processing...")
+            logging.info("Started fetch ranked members processing...")
             clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(
                 clan_tag, card_type_arg)
-            print("Completed fetch ranked members processing")
+            logging.info("Completed fetch ranked members processing")
 
         await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg))
 
