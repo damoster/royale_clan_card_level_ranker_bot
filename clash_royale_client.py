@@ -6,7 +6,8 @@ import requests
 # pre-condition: Assumes environment variable 'ROYALE_API_KEY' has been set
 class ClashRoyaleClient:
     def __init__(self):
-        self.base_url = 'https://api.clashroyale.com/v1'
+        #self.base_url = 'https://api.clashroyale.com/v1' - Leaving the original Royal API url as it might be needed in the future
+        self.base_url = 'https://proxy.royaleapi.dev/v1'
         self.auth_token = os.getenv('ROYALE_API_KEY')
         self.request_headers = {'Authorization': 'Bearer {}'.format(self.auth_token)}
 
