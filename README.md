@@ -13,6 +13,7 @@ Discord bot which ranks members in a specific clan according to how many cards o
 `!boatattack [clan_tag]` - returns list of clan members that attacked other's boat
 - where `clan_tag` does not include #. e.g. `!membercardsranked 9GULPJ9L`
 - `clan_tag` can be upper or lower case
+
 `!ausclanboat` - does the same thing as `!boatattack 9GULPJ9L`. Mostly likely just used by this clan anyway.
 
 ## Requirements
