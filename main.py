@@ -13,7 +13,7 @@ from common import schemas
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
 
 from logging.handlers import TimedRotatingFileHandler
-
+from datetime import datetime
 
 def setup_tokens():
     expected_env_vars = [
@@ -48,7 +48,7 @@ def setup_logging(logging_level=logging.WARNING):
     rootLogger.setLevel(logging_level)
     # TimedRotating FileHandler
     timedRotatingFileHandler = TimedRotatingFileHandler(
-        logging_directory + "system_logs.log", when="w0", interval=1)
+        logging_directory + 'system-logs-{:%Y-%m-%d}.log'.format(datetime.now()), when="w0", interval=1)
     timedRotatingFileHandler.setFormatter(logFormatter)
     rootLogger.addHandler(timedRotatingFileHandler)
     # Writes logs to sys.sterr
