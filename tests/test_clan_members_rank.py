@@ -8,22 +8,22 @@ from tests.resources import clash_royale_client_responses
 player1 = {
     'tag': '#PL4Y3R1',
     'name': 'player1',
-    'card_level_counts': {13: 17, 12: 28, 11: 11, 10: 4, 9: 1, 8: 2, 7: 8, 6: 0, 5: 0, 4: 0, 3: 0, 2: 9, 1: 0}
+    'card_level_counts': {14: 3, 13: 17, 12: 28, 11: 11, 10: 4, 9: 1, 8: 2, 7: 8, 6: 0, 5: 0, 4: 0, 3: 0, 2: 9, 1: 0}
 }
 player2 = {
     'tag': '#PL4Y3R2',
     'name': 'player2',
-    'card_level_counts': {13: 17, 12: 28, 11: 11, 10: 4, 9: 1, 8: 2, 7: 8, 6: 0, 5: 0, 4: 0, 3: 0, 2: 7, 1: 0}
+    'card_level_counts': {14: 3, 13: 17, 12: 28, 11: 11, 10: 4, 9: 1, 8: 2, 7: 8, 6: 0, 5: 0, 4: 0, 3: 0, 2: 7, 1: 0}
 }
 player3 = {
     'tag': '#PL4Y3R3',
     'name': 'player3',
-    'card_level_counts': {13: 30, 12: 8, 11: 32, 10: 0, 9: 0, 8: 0, 7: 0, 6: 0, 5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
+    'card_level_counts': {14: 5, 13: 30, 12: 8, 11: 32, 10: 0, 9: 0, 8: 0, 7: 0, 6: 0, 5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
 }
 player4 = {
     'tag': '#PL4Y3R4',
     'name': 'player4',
-    'card_level_counts': {13: 30, 12: 8, 11: 32, 10: 0, 9: 0, 8: 0, 7: 0, 6: 0, 5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
+    'card_level_counts': {14: 5, 13: 30, 12: 8, 11: 32, 10: 0, 9: 0, 8: 0, 7: 0, 6: 0, 5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
 }
 
 
@@ -48,21 +48,21 @@ class TestClanMembersRanker(unittest.TestCase):
     def test_get_card_level_counts(self):
         # given
         expected_card_level_counts = {
-            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 1, 7: 1, 8: 2, 9: 6, 10: 27, 11: 28, 12: 24, 13: 12}
+            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 1, 8: 2, 9: 4, 10: 26, 11: 18, 12: 19, 13: 32, 14: 0}
         filtered_troop_expected_card_level_counts = {
-            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 1, 8: 1, 9: 4, 10: 17, 11: 19, 12: 18, 13: 9}
+            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 1, 8: 1, 9: 2, 10: 16, 11: 13, 12: 14, 13: 23, 14: 0}
         filtered_spell_expected_card_level_counts = {
-            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 1, 9: 1, 10: 4, 11: 7, 12: 4, 13: 2}
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 1, 9: 1, 10: 3, 11: 3, 12: 4, 13: 7, 14: 0}
         filtered_building_expected_card_level_counts = {
-            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 1, 7: 0, 8: 0, 9: 1, 10: 6, 11: 2, 12: 2, 13: 1}
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 1, 10: 7, 11: 2, 12: 1, 13: 2, 14: 0}
 
-        filtered_troop_expected_card_level_counts_p1 = {
-            1: 1, 2: 0, 3: 0, 4: 1, 5: 0, 6: 0, 7: 12, 8: 3, 9: 5, 10: 4, 11: 17, 12: 11, 13: 17}
-        filtered_spell_expected_card_level_counts_p1 = {
-            1: 1, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 7, 8: 0, 9: 4, 10: 1, 11: 5, 12: 1, 13: 0}
+        filtered_troop_expected_card_level_counts_p3 = {
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 2, 12: 10, 13: 58, 14: 4}
+        filtered_spell_expected_card_level_counts_p3 = {
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 3, 13: 13, 14: 3}
 
         player_2_cards = clash_royale_client_responses.PLAYER_2_RESPONSE['cards']
-        player_1_cards = clash_royale_client_responses.PLAYER_1_RESPONSE['cards']
+        player_3_cards = clash_royale_client_responses.PLAYER_3_RESPONSE['cards']
         # when
         clan_members_rank = ClanMembersRanker()
 
@@ -104,16 +104,16 @@ class TestClanMembersRanker(unittest.TestCase):
         # Reason to test out on Player 1 is to check the correctness of the ranking for test_get_clan_cards_rank assertion
         # 6. Player 1 troop test
         card_level_counts = clan_members_rank.get_card_level_counts(
-            player_1_cards, 'troop')
+            player_3_cards, 'troop')
         # then
         self.assertEqual(card_level_counts,
-                         filtered_troop_expected_card_level_counts_p1)
+                         filtered_troop_expected_card_level_counts_p3)
         # 7. Player 1 spell test
         card_level_counts = clan_members_rank.get_card_level_counts(
-            player_1_cards, 'spell')
+            player_3_cards, 'spell')
         # then
         self.assertEqual(card_level_counts,
-                         filtered_spell_expected_card_level_counts_p1)
+                         filtered_spell_expected_card_level_counts_p3)
 
     def test_get_clan_cards_rank(self):
         clan_members_rank = ClanMembersRanker()

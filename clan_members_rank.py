@@ -3,7 +3,7 @@ from functools import cmp_to_key
 from multiprocessing import Pool
 
 from clash_royale_client import ClashRoyaleClient
-from common import schemas
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -18,7 +18,7 @@ def card_count_comparator(count1, count2):
 
 def compare_card_levels(p1, p2):
     compare_result = 0
-    card_level = 13
+    card_level = MAX_CARD_LEVEL
     while compare_result == 0 and card_level > 0:
         p1_card_count = p1['card_level_counts'][card_level]
         p2_card_count = p2['card_level_counts'][card_level]
@@ -35,18 +35,18 @@ class ClanMembersRanker:
 
     def get_card_level_counts(self, player_cards, card_type_filter='all'):
         # card_type_filter check
-        valid_arguments = schemas.CARD_TYPE_ID_PREFIX.values()
+        valid_arguments = CARD_TYPE_ID_PREFIX.values()
         if card_type_filter not in valid_arguments and card_type_filter not in 'all':
             raise ValueError(
                 "function must have valid card types: 'all' (defualt), 'troop', 'building', or 'spell'"
             )
-        card_level_counts = {i: 0 for i in range(1, 14)}
+        card_level_counts = {i: 0 for i in range(1, MAX_CARD_LEVEL + 1)}
 
         for card in player_cards:
             # At the beginning of time, maxLevel of legendaries used to be 5.
             # While the UI has updated that to 13, the data still has it relative to that maximum.
-            card_level = 13 - (card['maxLevel'] - card['level'])
-            card_type = schemas.CARD_TYPE_ID_PREFIX[str(card['id'])[:2]]
+            card_level = MAX_CARD_LEVEL - (card['maxLevel'] - card['level'])
+            card_type = CARD_TYPE_ID_PREFIX[str(card['id'])[:2]]
             if card_type_filter == 'all' or card_type == card_type_filter:
                 card_level_counts[card_level] += 1
 

@@ -223,11 +223,11 @@ def main():
         rank_values = []
         for idx, member in enumerate(top_n):
             mc = member['card_level_counts']
-            rank_text_row = '` {:2d} ` | `  {:2d}, {:2d}, {:2d}  ` | **{}**'.format(
-                idx + 1, mc[13], mc[12], mc[11], member['name']
+            rank_text_row = '` {:2d} ` | `  {:2d}, {:2d}, {:2d}, {:2d}  ` | **{}**'.format(
+                idx + 1, mc[14], mc[13], mc[12], mc[11], member['name']
             )
             rank_values.append(rank_text_row)
-        field_name = '**Rank** | **# of lvl 13, 12, 11** | **Player Name**'
+        field_name = '**Rank** | **# of lvl 14, 13, 12, 11** | **Player Name**'
         embed.add_field(name=field_name, value='\n'.join(rank_values), inline=False)
 
         return embed
