@@ -59,6 +59,10 @@ OR using the Makefile
 make test
 ```
 
+## Running with Docker
+```
+docker-compose up
+```
 ## References
 Helpful links used during development
 - https://www.freecodecamp.org/news/create-a-discord-bot-with-python/
