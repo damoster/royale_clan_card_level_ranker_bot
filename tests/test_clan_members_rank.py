@@ -48,18 +48,18 @@ class TestClanMembersRanker(unittest.TestCase):
     def test_get_card_level_counts(self):
         # given
         expected_card_level_counts = {
-            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 1, 8: 2, 9: 4, 10: 26, 11: 18, 12: 19, 13: 32, 14: 0}
+            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 1, 8: 2, 9: 4, 10: 26, 11: 18, 12: 19, 13: 28, 14: 4}
         filtered_troop_expected_card_level_counts = {
-            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 1, 8: 1, 9: 2, 10: 16, 11: 13, 12: 14, 13: 23, 14: 0}
+            1: 1, 2: 0, 3: 0, 4: 0, 5: 1, 6: 0, 7: 1, 8: 1, 9: 2, 10: 16, 11: 13, 12: 14, 13: 20, 14: 3}
         filtered_spell_expected_card_level_counts = {
-            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 1, 9: 1, 10: 3, 11: 3, 12: 4, 13: 7, 14: 0}
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 1, 9: 1, 10: 3, 11: 3, 12: 4, 13: 6, 14: 1}
         filtered_building_expected_card_level_counts = {
             1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 1, 10: 7, 11: 2, 12: 1, 13: 2, 14: 0}
 
         filtered_troop_expected_card_level_counts_p3 = {
-            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 2, 12: 10, 13: 58, 14: 4}
+            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 1, 9: 5, 10: 10, 11: 23, 12: 24, 13: 6, 14: 4}
         filtered_spell_expected_card_level_counts_p3 = {
-            1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 0, 11: 0, 12: 3, 13: 13, 14: 3}
+            1: 1, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0, 10: 1, 11: 6, 12: 4, 13: 5, 14: 2}
 
         player_2_cards = clash_royale_client_responses.PLAYER_2_RESPONSE['cards']
         player_3_cards = clash_royale_client_responses.PLAYER_3_RESPONSE['cards']
@@ -127,9 +127,9 @@ class TestClanMembersRanker(unittest.TestCase):
             clash_royale_client_responses.CLAN_INFO_API_RESPONSE['memberList']
         ).thenReturn(
             [
-                clash_royale_client_responses.PLAYER_1_RESPONSE,
-                clash_royale_client_responses.PLAYER_2_RESPONSE,
-                clash_royale_client_responses.PLAYER_3_RESPONSE
+                clash_royale_client_responses.PLAYER_1_RESPONSE, # #LYJVYUUUR ZEPOL
+                clash_royale_client_responses.PLAYER_2_RESPONSE, # #8VUG0GQRY Joseph
+                clash_royale_client_responses.PLAYER_3_RESPONSE  # #VV2C2CU Drizzle
             ]
         )
 
@@ -139,25 +139,25 @@ class TestClanMembersRanker(unittest.TestCase):
         self.assertEqual(
             clan_info, clash_royale_client_responses.CLAN_INFO_API_RESPONSE)
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
-                         '#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
+                         '#LYJVYUUUR', '#8VUG0GQRY', '#VV2C2CU'])
 
         # 2. Card Type Filter Test with 'troop' - Expected sort order (in terms of card counts is player1, player2, player3)
         clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
             clan_tag, 'troop')
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
-                         '#LYJVYUUUR', '#YV9GU2VG', '#8VUG0GQRY'])
+                         '#LYJVYUUUR', '#8VUG0GQRY', '#VV2C2CU'])
 
         # 3. Card Type Filter Test with 'spell' - Expected sort order (in terms of card counts is player1, player2, player3)
         clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
             clan_tag, card_type_filter='spell')
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
-                         '#LYJVYUUUR', '#8VUG0GQRY', '#YV9GU2VG'])
+                         '#LYJVYUUUR', '#VV2C2CU', '#8VUG0GQRY'])
 
         # 4. Card Type Filter Test with 'building' - Expected sort order (in terms of card counts is player1, player2, player3)
         clan_info, member_cards_ranked = clan_members_rank.get_clan_cards_rank(
             clan_tag, card_type_filter='building')
         self.assertEqual([m['tag'] for m in member_cards_ranked], [
-                         '#LYJVYUUUR', '#8VUG0GQRY', '#YV9GU2VG'])
+                         '#LYJVYUUUR', '#VV2C2CU', '#8VUG0GQRY'])
 
         # 5. Card Type Filter Test with Invalid input
         with self.assertRaises(ValueError) as context:
