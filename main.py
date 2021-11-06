@@ -152,7 +152,7 @@ def main():
             logging.info("Started fetch ranked members processing...")
             clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(
                 clan_tag, card_type_arg)
-            logging.info("Completed fetch ranked members process")
+            logging.info("Completed fetch ranked members processing")
 
         await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg))
 
