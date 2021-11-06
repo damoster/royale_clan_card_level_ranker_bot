@@ -20,7 +20,7 @@ def compare_card_levels(p1, p2):
     compare_result = 0
     card_level = MAX_CARD_LEVEL
     while compare_result == 0 and card_level > 0:
-        # Grouping level 14 cards and level 13 cards together as ranking it by level 14 doesn't mean they've got the best boat defence
+        # Not many players have a lot of level 14 cards yet, but it has a hugh weighting if we don't compare them by group level 13 and 14 cards together
         if card_level == MAX_CARD_LEVEL:
             p1_card_count = p1['card_level_counts'][card_level] + p1['card_level_counts'][card_level - 1]
             p2_card_count = p2['card_level_counts'][card_level] + p2['card_level_counts'][card_level - 1]

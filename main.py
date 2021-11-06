@@ -223,7 +223,7 @@ def main():
         rank_values = []
         for idx, member in enumerate(top_n):
             mc = member['card_level_counts']
-            rank_text_row = '` {:2d} ` | `  {:2d}, {:2d}, {:2d}, {:2d}  ` | **{}**'.format(
+            rank_text_row = '` {:2d} ` | ` ({:2d}, {:2d} ), {:2d}, {:2d} ` | **{}**'.format(
                 idx + 1, mc[14], mc[13], mc[12], mc[11], member['name']
             )
             rank_values.append(rank_text_row)
