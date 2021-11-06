@@ -20,10 +20,16 @@ def compare_card_levels(p1, p2):
     compare_result = 0
     card_level = MAX_CARD_LEVEL
     while compare_result == 0 and card_level > 0:
-        p1_card_count = p1['card_level_counts'][card_level]
-        p2_card_count = p2['card_level_counts'][card_level]
+        # Grouping level 14 cards and level 13 cards together as ranking it by level 14 doesn't mean they've got the best boat defence
+        if card_level == MAX_CARD_LEVEL:
+            p1_card_count = p1['card_level_counts'][card_level] + p1['card_level_counts'][card_level - 1]
+            p2_card_count = p2['card_level_counts'][card_level] + p2['card_level_counts'][card_level - 1]
+            card_level -= 2
+        else:
+            p1_card_count = p1['card_level_counts'][card_level]
+            p2_card_count = p2['card_level_counts'][card_level]
+            card_level -= 1
         compare_result = card_count_comparator(p1_card_count, p2_card_count)
-        card_level -= 1
     return compare_result
 
 
@@ -44,7 +50,7 @@ class ClanMembersRanker:
 
         for card in player_cards:
             # At the beginning of time, maxLevel of legendaries used to be 5.
-            # While the UI has updated that to 13, the data still has it relative to that maximum.
+            # While the UI has updated that to 14, the data still has it relative to that maximum.
             card_level = MAX_CARD_LEVEL - (card['maxLevel'] - card['level'])
             card_type = CARD_TYPE_ID_PREFIX[str(card['id'])[:2]]
             if card_type_filter == 'all' or card_type == card_type_filter:

@@ -152,7 +152,7 @@ def main():
             logging.info("Started fetch ranked members processing...")
             clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(
                 clan_tag, card_type_arg)
-            logging.info("Completed fetch ranked members processing")
+            logging.info("Completed fetch ranked members process")
 
         await ctx.send(embed=create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg))
 
@@ -208,7 +208,7 @@ def main():
 
         embed = discord.Embed(
             description=dedent('''
-                Players ranked by number of cards they have at each level. Comparison start at level 13 card count.
+                Players ranked by number of cards they have at each level. Comparison start at level 14 card count.
                 Showing the top **{}** players.
                 Card Count Filter Type: **{}**
             '''.format(n, card_type_arg)),
@@ -227,7 +227,7 @@ def main():
                 idx + 1, mc[14], mc[13], mc[12], mc[11], member['name']
             )
             rank_values.append(rank_text_row)
-        field_name = '**Rank** | **# of lvl 14, 13, 12, 11** | **Player Name**'
+        field_name = '**Rank** | **# of lvl (14, 13), 12, 11** | **Player Name**'
         embed.add_field(name=field_name, value='\n'.join(rank_values), inline=False)
 
         return embed
