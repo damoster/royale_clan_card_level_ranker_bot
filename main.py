@@ -77,7 +77,8 @@ def main():
         if isinstance(exc, commands.CommandNotFound):
             # store as info log so we know what people are trying to type into the bot
             logging.info(exc)
-            return  # Return because we don't want to log an error for every command not found
+            # Prompts the user to use bothelp command to help them with the right command
+            message = "Command not found. Please use !bothelp command for supported commands"
         else:
             message = "Oh no! Something went wrong while running the command!"
             # if there are errors not handled above, raise the error and log it
@@ -208,7 +209,7 @@ def main():
 
         embed = discord.Embed(
             description=dedent('''
-                Players ranked by number of cards they have at each level. Comparison start at level 13 card count.
+                Players ranked by number of cards they have at each level. Comparison start at level 14 card count.
                 Showing the top **{}** players.
                 Card Count Filter Type: **{}**
             '''.format(n, card_type_arg)),
@@ -223,11 +224,11 @@ def main():
         rank_values = []
         for idx, member in enumerate(top_n):
             mc = member['card_level_counts']
-            rank_text_row = '` {:2d} ` | `  {:2d}, {:2d}, {:2d}, {:2d}  ` | **{}**'.format(
+            rank_text_row = '` {:2d} ` | ` ({:2d}, {:2d}), {:2d}, {:2d} ` | **{}**'.format(
                 idx + 1, mc[14], mc[13], mc[12], mc[11], member['name']
             )
             rank_values.append(rank_text_row)
-        field_name = '**Rank** | **# of lvl 14, 13, 12, 11** | **Player Name**'
+        field_name = '**Rank** | **# of lvl (14, 13), 12, 11** | **Player Name**'
         embed.add_field(name=field_name, value='\n'.join(rank_values), inline=False)
 
         return embed
