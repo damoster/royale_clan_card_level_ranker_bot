@@ -63,11 +63,13 @@ def boat_attackers_embed(boat_attackers, clan_info):
 
 class DiscordBot():
     def __init__(self):
-        clan_members_ranker = ClanMembersRanker()
-        royale_api_website_scraper = RoyaleApiWebsiteScraper()
+        self.clan_members_ranker = ClanMembersRanker()
+        self.royale_api_website_scraper = RoyaleApiWebsiteScraper()
         activity = discord.Game(name="!bothelp")
         self.bot = commands.Bot(command_prefix="!", activity=activity)
-
+        self.bot_events()
+        self.bot_commands()
+    def bot_events(self):
         @self.bot.event
         async def on_ready():
             print(f'Bot is up and ready. We have logged in as {self.bot.user}')
@@ -97,6 +99,7 @@ class DiscordBot():
             # await ctx.message.delete(delay=5)
 
         # Discord bot commands
+    def bot_commands(self):
         @self.bot.command()
         async def bothelp(ctx):
             async with ctx.typing():
@@ -152,7 +155,7 @@ class DiscordBot():
         async def fetch_ranked_members(ctx, clan_tag, card_type_arg='all'):
             async with ctx.typing():
                 logging.info("Started fetch ranked members processing...")
-                clan_info, clan_members_ranked = clan_members_ranker.get_clan_cards_rank(
+                clan_info, clan_members_ranked = self.clan_members_ranker.get_clan_cards_rank(
                     clan_tag, card_type_arg)
                 logging.info("Completed fetch ranked members processing")
 
@@ -173,7 +176,7 @@ class DiscordBot():
         @self.bot.command()
         async def boatattack(ctx, clan_tag):
             async with ctx.typing():
-                clan_info, war_partitipation_table = royale_api_website_scraper.get_war_participation_table(clan_tag)
+                clan_info, war_partitipation_table = self.royale_api_website_scraper.get_war_participation_table(clan_tag)
                 embed = boat_attackers_embed(war_partitipation_table, clan_info)
             await ctx.send(embed=embed)
 
