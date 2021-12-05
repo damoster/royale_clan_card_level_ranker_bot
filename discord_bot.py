@@ -65,8 +65,9 @@ class DiscordBot():
     def __init__(self):
         clan_members_ranker = ClanMembersRanker()
         royale_api_website_scraper = RoyaleApiWebsiteScraper()
-        self.bot = commands.Bot(command_prefix="!", description="!bothelp")
-        
+        activity = discord.Game(name="!bothelp")
+        self.bot = commands.Bot(command_prefix="!", activity=activity)
+
         @self.bot.event
         async def on_ready():
             print(f'Bot is up and ready. We have logged in as {self.bot.user}')
