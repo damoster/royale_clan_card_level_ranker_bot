@@ -67,3 +67,4 @@ docker-compose up
 Helpful links used during development
 - https://www.freecodecamp.org/news/create-a-discord-bot-with-python/
 - https://developer.clashroyale.com/#/documentation 
+- Discord COGS tutorial - https://www.youtube.com/watch?v=mWLtUhY1kqg&list=PLYtUtBE908CsROaXFxwENoOM_D5HtAeWi&index=2&ab_channel=synopNode%28%29

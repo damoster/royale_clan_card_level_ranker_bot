@@ -52,8 +52,8 @@ def main():
     setup_tokens()
     # To enable logging on INFO level, logging_level=logging.INFO. Default is ERROR
     setup_logging(logging_level=logging.INFO)
-    bot = DiscordBot()
-    bot.run()
+    bot = DiscordBot(command_prefix=["!"])
+    bot.run(os.getenv('DISCORD_BOT_TOKEN'))
     
 
 if __name__ == '__main__':
