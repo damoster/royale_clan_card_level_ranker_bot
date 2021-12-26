@@ -6,6 +6,7 @@ from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
 from discord_bot import DiscordBot
 
+
 def setup_tokens():
     expected_env_vars = [
         'DISCORD_BOT_TOKEN',
@@ -54,7 +55,7 @@ def main():
     setup_logging(logging_level=logging.INFO)
     bot = DiscordBot(command_prefix=["!"])
     bot.run(os.getenv('DISCORD_BOT_TOKEN'))
-    
+
 
 if __name__ == '__main__':
     main()

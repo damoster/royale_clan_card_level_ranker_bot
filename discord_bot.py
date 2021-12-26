@@ -4,6 +4,7 @@ import traceback
 import logging
 from discord.ext import commands
 
+
 def load_cogs(client):
     for cog in [file.split(".")[0] for file in os.listdir("cogs") if file.endswith(".py")]:
         try:
@@ -11,6 +12,7 @@ def load_cogs(client):
                 client.load_extension(f"cogs.{cog}")
         except Exception as exc:
             logging.error(exc)
+
 
 class DiscordBot(commands.Bot):
     def __init__(self, command_prefix):
@@ -43,6 +45,7 @@ class DiscordBot(commands.Bot):
         # Saw some tutorials which want to delete messages about failure after 5 seconds, do we want this?
         # await ctx.send(message, delete_after=5)
         # await ctx.message.delete(delay=5)
+
 
 if __name__ == "__main__":
     client = DiscordBot(command_prefix=["!"])
