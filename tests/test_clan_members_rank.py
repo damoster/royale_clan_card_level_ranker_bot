@@ -127,9 +127,9 @@ class TestClanMembersRanker(unittest.TestCase):
             clash_royale_client_responses.CLAN_INFO_API_RESPONSE['memberList']
         ).thenReturn(
             [
-                clash_royale_client_responses.PLAYER_1_RESPONSE, # #LYJVYUUUR ZEPOL
-                clash_royale_client_responses.PLAYER_2_RESPONSE, # #8VUG0GQRY Joseph
-                clash_royale_client_responses.PLAYER_3_RESPONSE  # #VV2C2CU Drizzle
+                clash_royale_client_responses.PLAYER_1_RESPONSE,  # #LYJVYUUUR ZEPOL
+                clash_royale_client_responses.PLAYER_2_RESPONSE,  # #8VUG0GQRY Joseph
+                clash_royale_client_responses.PLAYER_3_RESPONSE   # #VV2C2CU Drizzle
             ]
         )
 
