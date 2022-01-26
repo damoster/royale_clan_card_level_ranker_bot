@@ -4,7 +4,7 @@ from multiprocessing import Pool
 from typing import Dict
 
 from clash_royale_client import ClashRoyaleClient
-from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, PlayerActivity
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, PlayerActivity, MIN_FAME_WEEK
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -39,7 +39,7 @@ def compute_war_active(fame_hist: list) -> bool:
     for week in fame_hist:
         if week is None:
             continue
-        elif week < 1200:
+        elif week < MIN_FAME_WEEK:
             war_active = False
             break
     return war_active
@@ -47,7 +47,7 @@ def compute_war_active(fame_hist: list) -> bool:
 def compute_elder_worthy(fame_hist: list) -> bool:
     elder_worthy = True
     for week in fame_hist:
-        if week is None or week < 1200:
+        if week is None or week < MIN_FAME_WEEK:
             elder_worthy = False
             break
     return elder_worthy
@@ -162,9 +162,7 @@ class ClashRoyaleService:
                             clan_players_war_history[participant['tag']].boat_attacks_hist[current_week] = participant['boatAttacks']
                     break
             current_week += 1
-        '''
-        Computing War active, elder worthy, and average fame
-        '''
+        # Computing War active, elder worthy, and average fame
         for player_tag in clan_players_war_history:
             player = clan_players_war_history[player_tag]
             player.war_active = compute_war_active(player.fame_hist)
