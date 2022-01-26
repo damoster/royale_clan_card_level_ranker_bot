@@ -30,4 +30,4 @@ class PlayerActivity:
     boat_attacks_hist: list
     war_active: bool = False
     elder_worthy: bool = False
-    avg_fame: int = -1
+    avg_fame: float = -1

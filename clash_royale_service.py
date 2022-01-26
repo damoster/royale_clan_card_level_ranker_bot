@@ -154,7 +154,7 @@ class ClashRoyaleService:
             # Second loop identifies the clan within the clan war
             for standing in clan_war['standings']:
                 clan = standing['clan']
-                if clan['tag'] == clan_tag:
+                if clan_tag.upper() in clan['tag']:
                     # Third Grab all the participants from the list and store it into the output object
                     for participant in clan['participants']:
                         if participant['tag'] in clan_players_war_history:

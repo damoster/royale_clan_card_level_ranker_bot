@@ -7,7 +7,7 @@ from typing import Dict
 
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
 from clash_royale_service import ClashRoyaleService
-from common.schemas import player_historical_activity
+from common.schemas import PlayerActivity
 
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
@@ -64,13 +64,35 @@ def boat_attackers_embed(boat_attackers, clan_info):
 
     return embed
 
-def clan_river_race_history_embed(clan_players_war_history: Dict[str, player_historical_activity]):
+def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActivity]):
     embed = discord.Embed(
         description=dedent('''
-            Clan river race history
+            Clan River Race History
         '''.format()),
-        colour=discord.Colour.blue()
+        colour=discord.Colour.green()
     )
+    # columns = 'War Active | Elder Worthy | Name | Role | Level | Fame History | Boat Attack History | Average Fame'
+    # row_values = []
+    # for player_tag in clan_players_war_history:
+    #     player = clan_players_war_history[player_tag]
+    #     row_val = '` {} `|` {} `|` {} `|` {} `|` {} `|` {} `|` {} `|` {} '.format(
+    #         player.war_active, player.elder_worthy, player.name, player.role , player.exp_level , player.fame_hist, player.boat_attacks_hist, player.avg_fame
+    #     )
+    #     row_values.append(row_val)
+    columns = 'WarActive | ElderWorthy | FameHistory | Name | Role '
+    row_values = []
+    for player_tag in clan_players_war_history:
+        player = clan_players_war_history[player_tag]
+        row_val = '` {} `|` {} `|` {} `|` {} `|` {} `'.format(
+            'Y' if player.war_active else 'N',
+            'Y' if player.elder_worthy else 'N',
+            player.fame_hist,
+            player.name,
+            player.role
+        )
+        if player.war_active and player.elder_worthy and player.role == 'member' or not player.war_active:
+            row_values.append(row_val)
+    embed.add_field(name=columns, value='\n'.join(row_values), inline=False)
     return embed
 
 
