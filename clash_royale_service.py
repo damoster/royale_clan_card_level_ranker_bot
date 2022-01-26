@@ -125,7 +125,8 @@ class ClashRoyaleService:
         return self.past_weeks_clan_war(clan_players_war_history, clan_tag, past_weeks)
 
     def past_weeks_clan_war(self, clan_players_war_history: Dict[str, player_historical_activity], clan_tag: str, past_weeks = 4) -> Dict[str, player_historical_activity]:
-        client_race_log_api_response = self.clash_royale_client.get_river_race_log(clan_tag)
+        client_race_log_api_response = self.get_river_race_log(clan_tag)
+        # print("joseph testing river race api: ", client_race_log_api_response)
         grouped_clan_wars = [item for index, item in enumerate(client_race_log_api_response['items']) if index < past_weeks]
         current_week = 0
         #First loop splits the clan wars into specific week

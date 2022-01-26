@@ -3,8 +3,11 @@ from discord.ext import commands
 from textwrap import dedent
 from common import schemas
 import logging
+from typing import Dict
+
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
 from clash_royale_service import ClashRoyaleService
+from common.schemas import player_historical_activity
 
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
@@ -59,6 +62,15 @@ def boat_attackers_embed(boat_attackers, clan_info):
             row_values.append(row_val)
         embed.add_field(name=columns, value='\n'.join(row_values), inline=False)
 
+    return embed
+
+def clan_river_race_history_embed(clan_players_war_history: Dict[str, player_historical_activity]):
+    embed = discord.Embed(
+        description=dedent('''
+            Clan river race history
+        '''.format()),
+        colour=discord.Colour.blue()
+    )
     return embed
 
 
@@ -127,6 +139,20 @@ class ClashRiverWar(commands.Cog):
     async def ausclanboat(self, ctx):
         await self.boatattack(ctx, '9GULPJ9L')
 
+    @commands.command(name="playersclanwar", pass_context=True)
+    async def playersclanwar(self, ctx, clan_tag: str, past_weeks=4):
+        clan_players_war_history = self.clash_royale_service.clan_river_race_history(clan_tag, past_weeks)
+        embed = clan_river_race_history_embed(clan_players_war_history)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="ausclanwar", pass_context=True)
+    async def playersclanwar(self, ctx, past_weeks=4):
+        async with ctx.typing():
+            logging.info("Fetching Clan River Race History")
+            clan_players_war_history = self.clash_royale_service.clan_river_race_history('9GULPJ9L', past_weeks)
+            logging.info("Completed Fetching Clan River Race History")
+        embed = clan_river_race_history_embed(clan_players_war_history)
+        await ctx.send(embed=embed)
 
 def setup(client):
     client.add_cog(ClashRiverWar(client))
