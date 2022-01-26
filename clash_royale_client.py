@@ -1,5 +1,4 @@
 import os
-
 import requests
 
 
@@ -38,5 +37,5 @@ class ClashRoyaleClient:
     def get_river_race_log(self, clan_tag):
         cleaned_tag = clan_tag.replace('#', '').upper()
         # Note: the '%23' is # when it is in the url
-        request_url = '{}/clans/%23{}/{}'.format(self.base_url, cleaned_tag, 'riverracelog')
+        request_url = '{}/clans/%23{}/riverracelog'.format(self.base_url, cleaned_tag)
         return self.make_request(request_url, 'riverracelog')
