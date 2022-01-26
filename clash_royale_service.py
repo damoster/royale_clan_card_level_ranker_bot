@@ -1,9 +1,10 @@
 import copy
 from functools import cmp_to_key
 from multiprocessing import Pool
+from typing import Dict
 
 from clash_royale_client import ClashRoyaleClient
-from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, PlayerActivity, MIN_FAME_WEEK
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -33,11 +34,40 @@ def compare_card_levels(p1, p2):
     return compare_result
 
 
-class ClanMembersRanker:
+def compute_war_active(fame_hist: list) -> bool:
+    war_active = True
+    for week in fame_hist:
+        if week is None:
+            continue
+        elif week < MIN_FAME_WEEK:
+            war_active = False
+            break
+    return war_active
+
+def compute_elder_worthy(fame_hist: list) -> bool:
+    elder_worthy = True
+    for week in fame_hist:
+        if week is None or week < MIN_FAME_WEEK:
+            elder_worthy = False
+            break
+    return elder_worthy
+
+def compute_average_fame(fame_hist: list) -> int:
+    average_fame = -1
+    result = [fame for fame in fame_hist if fame is not None]
+    if len(result) > 0:
+        average_fame = sum(result) / len(result)
+    return average_fame
+
+class ClashRoyaleService:
     def __init__(self):
         # Using pool size of 50 since that is the player limit in a clan
         self.pool_size = 50  # Using for I/O bound task (API requests)
         self.clash_royale_client = ClashRoyaleClient()
+
+    '''
+    Clan Ranker Functions
+    '''
 
     def get_card_level_counts(self, player_cards, card_type_filter='all'):
         # card_type_filter check
@@ -97,3 +127,45 @@ class ClanMembersRanker:
         member_cards_ranked = self.sort_list_by_card_level(member_cards_ranked)
 
         return clan_info, member_cards_ranked
+    '''
+    River Race Player Activity History Functions
+    '''
+    def clan_river_race_history(self, clan_tag: str, past_weeks: int = 4) -> Dict[str, PlayerActivity]:
+        clan_players_war_history = {}
+        client_clan_info = self.clash_royale_client.get_clan_info(clan_tag)
+        members_list = client_clan_info['memberList']
+        for member in members_list:
+            clan_players_war_history[member['tag']] = PlayerActivity(
+                tag = member['tag'],
+                name = member['name'],
+                role = member['role'],
+                exp_level = member['expLevel'],
+                fame_hist = [None]* past_weeks,
+                boat_attacks_hist = [None]* past_weeks
+            )
+        return self.past_weeks_clan_war(clan_players_war_history, clan_tag, past_weeks)
+
+    def past_weeks_clan_war(self, clan_players_war_history: Dict[str, PlayerActivity], clan_tag: str, past_weeks: int = 4) -> Dict[str, PlayerActivity]:
+        client_race_log_api_response = self.clash_royale_client.get_river_race_log(clan_tag)
+        grouped_clan_wars = client_race_log_api_response['items'][:past_weeks]
+        current_week = 0
+        # First loop splits the clan wars into specific week
+        for clan_war in grouped_clan_wars:
+            # Second loop identifies the clan within the clan war
+            for standing in clan_war['standings']:
+                clan = standing['clan']
+                if clan['tag'] == clan_tag:
+                    # Third Grab all the participants from the list and store it into the output object
+                    for participant in clan['participants']:
+                        if participant['tag'] in clan_players_war_history:
+                            clan_players_war_history[participant['tag']].fame_hist[current_week] = participant['fame']
+                            clan_players_war_history[participant['tag']].boat_attacks_hist[current_week] = participant['boatAttacks']
+                    break
+            current_week += 1
+        # Computing War active, elder worthy, and average fame
+        for player_tag in clan_players_war_history:
+            player = clan_players_war_history[player_tag]
+            player.war_active = compute_war_active(player.fame_hist)
+            player.elder_worthy = compute_elder_worthy(player.fame_hist)
+            player.avg_fame = compute_average_fame(player.fame_hist)
+        return clan_players_war_history

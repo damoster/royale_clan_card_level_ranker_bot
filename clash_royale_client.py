@@ -33,3 +33,8 @@ class ClashRoyaleClient:
         cleaned_tag = player_tag.replace('#', '').upper()
         request_url = '{}/players/%23{}'.format(self.base_url, cleaned_tag)
         return self.make_request(request_url, 'get_player_info')
+
+    # url param pre-conditoin -> clan_tag should not have # and all caps
+    def get_river_race_log(self, clan_tag):
+        # TODO
+        pass

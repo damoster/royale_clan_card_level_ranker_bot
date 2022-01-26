@@ -4,7 +4,7 @@ from textwrap import dedent
 from common import schemas
 import logging
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
-from clan_members_rank import ClanMembersRanker
+from clash_royale_service import ClashRoyaleService
 
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
@@ -65,13 +65,13 @@ def boat_attackers_embed(boat_attackers, clan_info):
 class ClashRiverWar(commands.Cog):
     def __init__(self, client):
         self.client = client
-        self.clan_members_ranker = ClanMembersRanker()
+        self.clash_royale_service = ClashRoyaleService()
         self.royale_api_website_scraper = RoyaleApiWebsiteScraper()
 
     async def fetch_ranked_members(self, ctx, clan_tag, card_type_arg='all'):
         async with ctx.typing():
             logging.info("Started fetch ranked members processing...")
-            clan_info, clan_members_ranked = self.clan_members_ranker.get_clan_cards_rank(
+            clan_info, clan_members_ranked = self.clash_royale_service.get_clan_cards_rank(
                 clan_tag, card_type_arg)
             logging.info("Completed fetch ranked members processing")
 
