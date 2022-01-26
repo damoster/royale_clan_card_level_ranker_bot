@@ -6,6 +6,7 @@ CARD_TYPE_ID_PREFIX = {'26': 'troop', '27': 'building', '28': 'spell'}
 MAX_CARD_LEVEL = 14
 
 # Minimum fame week required for someone to be active. i.e. used 4 decks 3 times = 12 battles. 12 * 100 = 1200 fame. 
+# 100 comes from the fame for losing non-boat battle
 MIN_FAME_WEEK = 1200
 
 @dataclass
