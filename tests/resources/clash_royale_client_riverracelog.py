@@ -235,7 +235,7 @@ RIVER_RACE_LOG_API_RESPONSE = {
                 {
                   "tag": "#Q0QP02V2Q",
                   "name": "Nacho",
-                  "fame": 2500,
+                  "fame": 800,
                   "repairPoints": 0,
                   "boatAttacks": 0,
                   "decksUsed": 16,
@@ -3373,7 +3373,7 @@ RIVER_RACE_LOG_API_RESPONSE = {
                 {
                   "tag": "#LYJVYUUUR",
                   "name": "ZEPOL 1244",
-                  "fame": 2200,
+                  "fame": 1100,
                   "repairPoints": 0,
                   "boatAttacks": 0,
                   "decksUsed": 15,
@@ -7033,7 +7033,7 @@ RIVER_RACE_LOG_API_RESPONSE = {
                 {
                   "tag": "#Q0QP02V2Q",
                   "name": "Nacho",
-                  "fame": 2200,
+                  "fame": 1000,
                   "repairPoints": 0,
                   "boatAttacks": 0,
                   "decksUsed": 14,
@@ -7532,15 +7532,6 @@ RIVER_RACE_LOG_API_RESPONSE = {
                   "repairPoints": 0,
                   "boatAttacks": 0,
                   "decksUsed": 0,
-                  "decksUsedToday": 0
-                },
-                {
-                  "tag": "#2YR9QLQUU",
-                  "name": "~Jules~",
-                  "fame": 1650,
-                  "repairPoints": 0,
-                  "boatAttacks": 0,
-                  "decksUsed": 12,
                   "decksUsedToday": 0
                 },
                 {
@@ -10556,15 +10547,6 @@ RIVER_RACE_LOG_API_RESPONSE = {
                   "decksUsedToday": 0
                 },
                 {
-                  "tag": "#Q0QP02V2Q",
-                  "name": "Nacho",
-                  "fame": 2600,
-                  "repairPoints": 0,
-                  "boatAttacks": 0,
-                  "decksUsed": 17,
-                  "decksUsedToday": 0
-                },
-                {
                   "tag": "#9RQCP0JY",
                   "name": "FireBolt",
                   "fame": 0,
@@ -10928,15 +10910,6 @@ RIVER_RACE_LOG_API_RESPONSE = {
                   "tag": "#9GQU0LRVP",
                   "name": "F4_ASTER",
                   "fame": 2650,
-                  "repairPoints": 0,
-                  "boatAttacks": 0,
-                  "decksUsed": 16,
-                  "decksUsedToday": 0
-                },
-                {
-                  "tag": "#2YR9QLQUU",
-                  "name": "~Jules~",
-                  "fame": 2550,
                   "repairPoints": 0,
                   "boatAttacks": 0,
                   "decksUsed": 16,

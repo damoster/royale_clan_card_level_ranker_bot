@@ -34,6 +34,33 @@ def compare_card_levels(p1, p2):
     return compare_result
 
 
+def compute_war_active(fame_hist: list) -> bool:
+    war_active = True
+    for week in fame_hist:
+        if week is None:
+            continue
+        elif week < 1200:
+            war_active = False
+            break
+    return war_active
+
+def compute_elder_worthy(fame_hist: list) -> bool:
+    elder_worthy = True
+    for week in fame_hist:
+        if week is None or week < 1200:
+            elder_worthy = False
+            break
+    return elder_worthy
+
+def compute_average_fame(fame_hist: list) -> int:
+    average_fame = -1
+    result = []
+    for fame in fame_hist:
+        if fame is not None:
+            result.append(fame)
+    if len(result) > 0:
+        average_fame = sum(result) / len(result)
+    return average_fame
 class ClashRoyaleService:
     def __init__(self):
         # Using pool size of 50 since that is the player limit in a clan
@@ -138,6 +165,11 @@ class ClashRoyaleService:
                     break
             current_week += 1
         '''
-        Compute War active here 
+        Computing War active, elder worthy, and average fame
         '''
+        for player_tag in clan_players_war_history:
+            player = clan_players_war_history[player_tag]
+            player.war_active = compute_war_active(player.fame_hist)
+            player.elder_worthy = compute_elder_worthy(player.fame_hist)
+            player.avg_fame = compute_average_fame(player.fame_hist)
         return clan_players_war_history
