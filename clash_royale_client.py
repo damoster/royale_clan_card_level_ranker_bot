@@ -36,4 +36,5 @@ class ClashRoyaleClient:
 
     # url param pre-conditoin -> clan_tag should not have # and all caps
     def get_river_race_log(self, clan_tag):
-        return True
+        # TODO
+        pass

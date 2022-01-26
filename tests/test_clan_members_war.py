@@ -3,14 +3,14 @@ from mockito import when
 
 from tests.resources import clash_royale_client_riverracelog, clash_royale_client_responses
 from clash_royale_service import ClashRoyaleService
-from common.schemas import player_historical_activity
+from common.schemas import PlayerActivity
 
 # Test Data here
 mock_clan_players_war_history = {
-    '#YV9GU2VG': player_historical_activity(tag='#YV9GU2VG', name='Goku', role='member', exp_level=13, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None], deck_used_hist=[None, None, None, None]), 
-    '#8VUG0GQRY': player_historical_activity(tag='#8VUG0GQRY', name='joseph', role='elder', exp_level=13, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None], deck_used_hist=[None, None, None, None]), 
-    '#LYJVYUUUR': player_historical_activity(tag='#LYJVYUUUR', name='ZEPOL 1244', role='coLeader', exp_level=13, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None], deck_used_hist=[None, None, None, None]),
-    '#SOMENOBDY': player_historical_activity(tag='#SOMENOBDY', name='NOBODY', role='member', exp_level=10, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None], deck_used_hist=[None, None, None, None])
+    '#YV9GU2VG': PlayerActivity(tag='#YV9GU2VG', name='Goku', role='member', exp_level=13, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None]), 
+    '#8VUG0GQRY': PlayerActivity(tag='#8VUG0GQRY', name='joseph', role='elder', exp_level=13, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None]), 
+    '#LYJVYUUUR': PlayerActivity(tag='#LYJVYUUUR', name='ZEPOL 1244', role='coLeader', exp_level=13, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None]),
+    '#SOMENOBDY': PlayerActivity(tag='#SOMENOBDY', name='NOBODY', role='member', exp_level=10, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None])
 }
 
 class TestRiverRaceLog(unittest.TestCase):
@@ -23,14 +23,24 @@ class TestRiverRaceLog(unittest.TestCase):
         )
 
         clan_players_war_history = clan_members_war.past_weeks_clan_war(mock_clan_players_war_history, clan_tag)
-        # Testing for the length returned. Should be 3 players returned
+        # Testing for the length returned. Should be 4 players returned
         self.assertEqual(len(clan_players_war_history), 4)
-        pass
 
         # Testing if fame_hist is updated for Joseph, Zepol, and Someone Who hasnt done War
-        self.assertEqual(clan_players_war_history['#8VUG0GQRY'].fame_hist, [2650, 2800, 2500, 3100])
-        self.assertEqual(clan_players_war_history['#LYJVYUUUR'].fame_hist, [2800, 2200, 2250, 3100])
-        self.assertEqual(clan_players_war_history['#SOMENOBDY'].fame_hist, [None, None, None, None])
+        # (TODO) compare object rather than specific value
+        # Test cases
+        # Joseph - fully active
+        # Zepol - did all 4 weeks of war, but one is < 1200
+        # None - didn't do any war
+        # Jules - joined half way, some of the weeks are none
+        joseph_activity = PlayerActivity(tag='#8VUG0GQRY', name='joseph', role='elder', exp_level=13, fame_hist=[2650, 2800, 2500, 3100], boat_attacks_hist=[None, None, None, None], war_active=True)
+        zepol_activity = PlayerActivity(tag='#LYJVYUUUR', name='ZEPOL 1244', role='coLeader', exp_level=13, fame_hist=[2800, 2200, 2250, 3100], boat_attacks_hist=[None, None, None, None], war_active=False)
+        none_activity = PlayerActivity(tag='#SOMENOBDY', name='NOBODY', role='member', exp_level=10, fame_hist=[None, None, None, None], boat_attacks_hist=[None, None, None, None], war_active=False)
+        self.assertEqual(clan_players_war_history['#8VUG0GQRY'], joseph_activity)
+        self.assertEqual(clan_players_war_history['#LYJVYUUUR'], zepol_activity)
+        self.assertEqual(clan_players_war_history['#SOMENOBDY'], none_activity)
+
+        # (TODO) Add test cases for Users who joined 2 weeks ago and did nothing
 
     def test_clan_river_race_history(self):
         clan_members_war = ClashRoyaleService()

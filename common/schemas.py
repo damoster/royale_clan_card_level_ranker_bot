@@ -5,13 +5,42 @@ from dataclasses import dataclass
 CARD_TYPE_ID_PREFIX = {'26': 'troop', '27': 'building', '28': 'spell'}
 MAX_CARD_LEVEL = 14
 
-# Data Clases
 @dataclass
-class player_historical_activity:
+class PlayerActivity:
+    '''
+    A player has a  "WarActiveWeek" for a specific week IF:n
+        Have done at least 3 of 4 war days per week (i.e. used 4 decks 3 times = 12 battles. 
+        At a minimum if they lose every battle that's NOT a boat attack, that would be 12 * 100 = 1200 fame. 
+        Use fame instead of decksUsed since can only get fame on war days, whereas decksUsed include practise days.
+
+    1. war_active is defined as: 
+        Every week while in the clan, they had "WarActiveWeek"s. E.g. 3,4 weeks ago they weren't in clan.
+        Then 2 weeks ago they joined. [None, None, 2000, 1500]
+
+        war_active = True
+        for week in fame_hist: # [None, None, 2000, 1500]
+            if week is None:
+                continue
+            else:
+                week < 1200:
+                    war_active = False
+                    break
+
+    2. elder_worthy is defined as: 
+        4 weeks straight of "WarActiveWeek"s.
+
+        elder_worthy = True
+        for item in fame_hist:
+            if week is None or week < 1200:
+                elder_worthy = False
+                break
+    '''
     tag: str
     name: str
     role: str
     exp_level: int
     fame_hist: list
     boat_attacks_hist: list
-    deck_used_hist: list
+    war_active: bool = False
+    elder_worthy: bool = False
+    avg_fame: int = -1

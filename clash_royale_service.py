@@ -4,7 +4,7 @@ from multiprocessing import Pool
 from typing import Dict
 
 from clash_royale_client import ClashRoyaleClient
-from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, player_historical_activity
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, PlayerActivity
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -105,30 +105,26 @@ class ClashRoyaleService:
     '''
     River Race Player Activity History Functions
     '''
-    def get_river_race_log(self, clan_tag: str):
-        return self.clash_royale_client.get_river_race_log(clan_tag)
-
-    def clan_river_race_history(self, clan_tag: str, past_weeks=4) -> Dict[str, player_historical_activity]:
+    def clan_river_race_history(self, clan_tag: str, past_weeks: int = 4) -> Dict[str, PlayerActivity]:
         clan_players_war_history = {}
         client_clan_info = self.clash_royale_client.get_clan_info(clan_tag)
         members_list = client_clan_info['memberList']
         for member in members_list:
-            clan_players_war_history[member['tag']] = player_historical_activity(
+            clan_players_war_history[member['tag']] = PlayerActivity(
                 tag = member['tag'],
                 name = member['name'],
                 role = member['role'],
                 exp_level = member['expLevel'],
                 fame_hist = [None]* past_weeks,
-                boat_attacks_hist = [None]* past_weeks,
-                deck_used_hist = [None]* past_weeks
+                boat_attacks_hist = [None]* past_weeks
             )
         return self.past_weeks_clan_war(clan_players_war_history, clan_tag, past_weeks)
 
-    def past_weeks_clan_war(self, clan_players_war_history: Dict[str, player_historical_activity], clan_tag: str, past_weeks = 4) -> Dict[str, player_historical_activity]:
+    def past_weeks_clan_war(self, clan_players_war_history: Dict[str, PlayerActivity], clan_tag: str, past_weeks: int = 4) -> Dict[str, PlayerActivity]:
         client_race_log_api_response = self.clash_royale_client.get_river_race_log(clan_tag)
-        grouped_clan_wars = [item for index, item in enumerate(client_race_log_api_response['items']) if index < past_weeks]
+        grouped_clan_wars = client_race_log_api_response['items'][:past_weeks]
         current_week = 0
-        #First loop splits the clan wars into specific week
+        # First loop splits the clan wars into specific week
         for clan_war in grouped_clan_wars:
             # Second loop identifies the clan within the clan war
             for standing in clan_war['standings']:
@@ -139,7 +135,9 @@ class ClashRoyaleService:
                         if participant['tag'] in clan_players_war_history:
                             clan_players_war_history[participant['tag']].fame_hist[current_week] = participant['fame']
                             clan_players_war_history[participant['tag']].boat_attacks_hist[current_week] = participant['boatAttacks']
-                            clan_players_war_history[participant['tag']].deck_used_hist[current_week] = participant['decksUsed']
                     break
-            current_week = current_week + 1
+            current_week += 1
+        '''
+        Compute War active here 
+        '''
         return clan_players_war_history
