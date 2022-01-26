@@ -54,13 +54,11 @@ def compute_elder_worthy(fame_hist: list) -> bool:
 
 def compute_average_fame(fame_hist: list) -> int:
     average_fame = -1
-    result = []
-    for fame in fame_hist:
-        if fame is not None:
-            result.append(fame)
+    result = [fame for fame in fame_hist if fame is not None]
     if len(result) > 0:
         average_fame = sum(result) / len(result)
     return average_fame
+
 class ClashRoyaleService:
     def __init__(self):
         # Using pool size of 50 since that is the player limit in a clan
