@@ -79,20 +79,26 @@ def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActi
     #         player.war_active, player.elder_worthy, player.name, player.role , player.exp_level , player.fame_hist, player.boat_attacks_hist, player.avg_fame
     #     )
     #     row_values.append(row_val)
-    columns = 'WarActive | ElderWorthy | FameHistory | Name | Role '
-    row_values = []
+    columns = '**WarActive** | **ElderWorthy** | **FameHistory** | **Name** | **Role**'
+    row_promote = []
+    row_demote = []
+    row_final = []
     for player_tag in clan_players_war_history:
         player = clan_players_war_history[player_tag]
-        row_val = '` {} `|` {} `|` {} `|` {} `|` {} `'.format(
+        row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | ` {:>} ` | **{:>}**'.format(
             'Y' if player.war_active else 'N',
             'Y' if player.elder_worthy else 'N',
             player.fame_hist,
-            player.name,
-            player.role
+            player.role,
+            player.name
         )
-        if player.war_active and player.elder_worthy and player.role == 'member' or not player.war_active:
-            row_values.append(row_val)
-    embed.add_field(name=columns, value='\n'.join(row_values), inline=False)
+        if player.war_active and player.elder_worthy and player.role == 'member':
+            row_promote.append(row_val)
+        elif not player.war_active:
+            row_demote.append(row_val)
+    
+    row_final = ['------------------------------- TO PROMOTE -------------------------------'] + row_promote + ['------------------------------- TO DEMOTE -------------------------------'] + row_demote
+    embed.add_field(name=columns, value='\n'.join(row_final), inline=False)
     return embed
 
 
