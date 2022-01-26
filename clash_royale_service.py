@@ -1,9 +1,10 @@
 import copy
 from functools import cmp_to_key
 from multiprocessing import Pool
+from typing import Dict
 
 from clash_royale_client import ClashRoyaleClient
-from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, player_historical_activity
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -33,11 +34,15 @@ def compare_card_levels(p1, p2):
     return compare_result
 
 
-class ClanMembersRanker:
+class ClashRoyaleService:
     def __init__(self):
         # Using pool size of 50 since that is the player limit in a clan
         self.pool_size = 50  # Using for I/O bound task (API requests)
         self.clash_royale_client = ClashRoyaleClient()
+
+    '''
+    Clan Ranker Functions
+    '''
 
     def get_card_level_counts(self, player_cards, card_type_filter='all'):
         # card_type_filter check
@@ -97,3 +102,44 @@ class ClanMembersRanker:
         member_cards_ranked = self.sort_list_by_card_level(member_cards_ranked)
 
         return clan_info, member_cards_ranked
+    '''
+    River Race Player Activity History Functions
+    '''
+    def get_river_race_log(self, clan_tag: str):
+        return clan_tag
+
+    def clan_river_race_history(self, clan_tag: str, past_weeks=4) -> Dict[str, Dict]:
+        clan_war_history = {}
+        client_clan_info = self.clash_royale_client.get_clan_info(clan_tag)
+        members_list = client_clan_info['memberList']
+        members_info = self.get_all_player_info(members_list)
+        player_war_history = self.past_weeks_clan_war(clan_tag, past_weeks)
+        return clan_war_history
+        
+    def past_weeks_clan_war(self, clan_tag: str, past_weeks = 4) -> Dict[str, Dict]:
+        client_race_log_api_response = self.clash_royale_client.get_river_race_log(clan_tag)
+        grouped_clan_wars = [item for index, item in enumerate(client_race_log_api_response['items']) if index < past_weeks]
+        player_war_history = {}
+        current_week = 0
+        #First loop splits the clan wars into specific week
+        for clan_war in grouped_clan_wars:
+            # Second loop identifies the clan within the clan war
+            for standing in clan_war['standings']:
+                clan = standing['clan']
+                if clan['tag'] == clan_tag:
+                    # Third Grab all the participants from the list and store it into the output object
+                    for participant in clan['participants']:
+                        if participant['tag'] not in player_war_history:
+                            player_war_history[participant['tag']] = player_historical_activity(
+                                tag = participant['tag'],
+                                name = participant['name'],
+                                fame_hist = [None]* past_weeks,
+                                boat_attacks_hist = [None]* past_weeks,
+                                deck_used_hist = [None]* past_weeks
+                            )
+                        player_war_history[participant['tag']].fame_hist[current_week] = participant['fame']
+                        player_war_history[participant['tag']].boat_attacks_hist[current_week] = participant['boatAttacks']
+                        player_war_history[participant['tag']].deck_used_hist[current_week] = participant['decksUsed']
+                    break
+            current_week = current_week + 1
+        return player_war_history

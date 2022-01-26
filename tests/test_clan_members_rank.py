@@ -1,7 +1,7 @@
 import unittest
 from mockito import when
 
-from clan_members_rank import ClanMembersRanker, card_count_comparator, compare_card_levels
+from clash_royale_service import ClashRoyaleService, card_count_comparator, compare_card_levels
 from tests.resources import clash_royale_client_responses
 
 # This test data here is setup so that ranking cards from highest to lowest should give player3, player1 then player 2
@@ -27,7 +27,7 @@ player4 = {
 }
 
 
-class TestClanMembersRanker(unittest.TestCase):
+class TestClashRoyaleService(unittest.TestCase):
 
     def test_card_count_comparator(self):
         # Since descending, result should be positive if a < b
@@ -64,7 +64,7 @@ class TestClanMembersRanker(unittest.TestCase):
         player_2_cards = clash_royale_client_responses.PLAYER_2_RESPONSE['cards']
         player_3_cards = clash_royale_client_responses.PLAYER_3_RESPONSE['cards']
         # when
-        clan_members_rank = ClanMembersRanker()
+        clan_members_rank = ClashRoyaleService()
 
         # 1. No filter test
         card_level_counts = clan_members_rank.get_card_level_counts(
@@ -116,7 +116,7 @@ class TestClanMembersRanker(unittest.TestCase):
                          filtered_spell_expected_card_level_counts_p3)
 
     def test_get_clan_cards_rank(self):
-        clan_members_rank = ClanMembersRanker()
+        clan_members_rank = ClashRoyaleService()
         clan_tag = "#S0M3CL4N"
 
         # Mock API responses and certain function calls
