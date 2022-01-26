@@ -10,6 +10,8 @@ MAX_CARD_LEVEL = 14
 class player_historical_activity:
     tag: str
     name: str
+    role: str
+    exp_level: int
     fame_hist: list
     boat_attacks_hist: list
     deck_used_hist: list

@@ -27,7 +27,7 @@ player4 = {
 }
 
 
-class TestClashRoyaleService(unittest.TestCase):
+class TestClanMembersRanker(unittest.TestCase):
 
     def test_card_count_comparator(self):
         # Since descending, result should be positive if a < b
