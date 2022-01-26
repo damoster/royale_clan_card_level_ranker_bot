@@ -106,7 +106,7 @@ class ClashRoyaleService:
     River Race Player Activity History Functions
     '''
     def get_river_race_log(self, clan_tag: str):
-        return clan_tag
+        return self.clash_royale_client.get_river_race_log(clan_tag)
 
     def clan_river_race_history(self, clan_tag: str, past_weeks=4) -> Dict[str, player_historical_activity]:
         clan_players_war_history = {}
