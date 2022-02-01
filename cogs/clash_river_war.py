@@ -81,7 +81,7 @@ def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActi
     row_final = []
     for player_tag in clan_players_war_history:
         player = clan_players_war_history[player_tag]
-        row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | ` {:>} `'.format(
+        row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | ** {:>} **'.format(
             'Y' if player.war_active else 'N',
             'Y' if player.elder_worthy else 'N',
             ",".join(["{:^4}".format(x) if isinstance(x, int) else '_' for x in player.fame_hist]),
