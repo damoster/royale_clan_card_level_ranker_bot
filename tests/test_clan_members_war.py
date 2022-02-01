@@ -59,7 +59,7 @@ class TestRiverRaceLog(unittest.TestCase):
         )
 
         # Testing if three players is returned based on get clan info
-        clan_players_war_history = clan_members_war.clan_river_race_history(clan_tag)
+        clan_info, clan_players_war_history = clan_members_war.clan_river_race_history(clan_tag)
         self.assertEqual(len(clan_players_war_history), 3)
 
         # Testing for expected output of a single player
@@ -67,7 +67,7 @@ class TestRiverRaceLog(unittest.TestCase):
         self.assertEqual(clan_players_war_history['#8VUG0GQRY'], joseph_activity)
 
         # Testing for changing the past week to longer period i.e. 8
-        clan_players_war_history = clan_members_war.clan_river_race_history(clan_tag, 8)
+        clan_info, clan_players_war_history = clan_members_war.clan_river_race_history(clan_tag, 8)
         self.assertEqual(len(clan_players_war_history['#8VUG0GQRY'].fame_hist), 8)
 
 if __name__ == '__main__':
