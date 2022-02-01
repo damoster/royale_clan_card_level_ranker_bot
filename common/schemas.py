@@ -9,6 +9,8 @@ MAX_CARD_LEVEL = 14
 # 100 comes from the fame for losing non-boat battle
 MIN_FAME_WEEK = 1200
 
+# Maximum discord embed length, if greater, discord bot will error
+MAX_DISCORD_ENBED = 1024
 @dataclass
 class PlayerActivity:
     '''

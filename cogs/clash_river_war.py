@@ -7,7 +7,7 @@ from typing import Dict
 
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
 from clash_royale_service import ClashRoyaleService
-from common.schemas import PlayerActivity
+from common.schemas import PlayerActivity, MAX_DISCORD_ENBED
 
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
@@ -79,17 +79,34 @@ def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActi
     #         player.war_active, player.elder_worthy, player.name, player.role , player.exp_level , player.fame_hist, player.boat_attacks_hist, player.avg_fame
     #     )
     #     row_values.append(row_val)
-    columns = '**WarActive** | **ElderWorthy** | **FameHistory** | **Name** | **Role**'
+    # columns = '**WarActive** | **ElderWorthy** | **AvgFame** | **Name** | **Role**'
+    # row_promote = []
+    # row_demote = []
+    # row_final = []
+    # for player_tag in clan_players_war_history:
+    #     player = clan_players_war_history[player_tag]
+    #     row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | ` {:>} ` | **{:>}**'.format(
+    #         'Y' if player.war_active else 'N',
+    #         'Y' if player.elder_worthy else 'N',
+    #         player.avg_fame,
+    #         player.role,
+    #         player.name
+    #     )
+    #     if player.war_active and player.elder_worthy and player.role == 'member':
+    #         row_promote.append(row_val)
+    #     elif not player.war_active:
+    #         row_demote.append(row_val)
+
+    columns = '**WarActive** | **ElderWorthy** | **FameHistory** | **Name**'
     row_promote = []
     row_demote = []
     row_final = []
     for player_tag in clan_players_war_history:
         player = clan_players_war_history[player_tag]
-        row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | ` {:>} ` | **{:>}**'.format(
+        row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | ` {:>} `'.format(
             'Y' if player.war_active else 'N',
             'Y' if player.elder_worthy else 'N',
-            player.fame_hist,
-            player.role,
+            [ i if isinstance(i, int) else '' for i in player.fame_hist ],
             player.name
         )
         if player.war_active and player.elder_worthy and player.role == 'member':
@@ -97,8 +114,11 @@ def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActi
         elif not player.war_active:
             row_demote.append(row_val)
     
-    row_final = ['------------------------------- TO PROMOTE -------------------------------'] + row_promote + ['------------------------------- TO DEMOTE -------------------------------'] + row_demote
-    embed.add_field(name=columns, value='\n'.join(row_final), inline=False)
+    row_final = ['**TO PROMOTE**'] + row_promote + ['**TO DEMOTE**'] + row_demote
+    row_final = '\n'.join(row_final)
+    if len(row_final) >= MAX_DISCORD_ENBED:
+        row_final = row_final[:MAX_DISCORD_ENBED]
+    embed.add_field(name=columns, value=row_final, inline=False)
     return embed
 
 
