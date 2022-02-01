@@ -67,25 +67,30 @@ def boat_attackers_embed(boat_attackers, clan_info):
 def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActivity]):
     embed = discord.Embed(
         description=dedent('''
-            ** ausclanwar **
-            ElderWorthy means player obtains minimum of 1200 fame per week over past 4 weeks. 
+            **ElderWorthy** means player obtains minimum of 1200 fame per week over past 4 weeks. 
             Doing 3/4 war days and losing all of them. i.e. 1200 = 3 days x 4 decks x 100 fame per non-boat-attack-loss.
-            Order of the FameHistory - First item is fame from 1 week ago, then 2, 3, 4.
+            Order of the **FameHistory** - First item is fame from 1 week ago, then 2, 3, 4.
         '''.format()),
         colour=discord.Colour.green()
     )
 
-    columns = '**WarActive** | **ElderWorthy** | **FameHistory** | **Name**'
+    embed.set_author(
+        name='AUSCLAN',
+        icon_url='https://static.wikia.nocookie.net/clashroyale/images/9/9f/War_Shield.png/revision/latest/scale-to-width-down/250?cb=20180425130200'
+    )
+
+    columns = '**WarActive** | **ElderWorthy** | **FameHistory** | **Name** | **Role**'
     row_promote = []
     row_demote = []
     row_final = []
     for player_tag in clan_players_war_history:
         player = clan_players_war_history[player_tag]
-        row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | {:>}'.format(
+        row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | {:>} | {}'.format(
             'Y' if player.war_active else 'N',
             'Y' if player.elder_worthy else 'N',
             ",".join(["{:^4}".format(x) if isinstance(x, int) else '_' for x in player.fame_hist]),
-            player.name
+            player.name,
+            player.role
         )
         if player.war_active and player.elder_worthy and player.role == 'member':
             row_promote.append(row_val)
@@ -94,6 +99,7 @@ def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActi
     
     row_final = ['**PROMOTE**'] + row_promote + ['**DEMOTE/KICK**'] + row_demote
     row_final = '\n'.join(row_final)
+    logging.info("embedded content length is: " + str(len(row_final)))
     if len(row_final) >= MAX_DISCORD_ENBED:
         row_final = row_final[:MAX_DISCORD_ENBED]
     embed.add_field(name=columns, value=row_final, inline=False)
