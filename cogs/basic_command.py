@@ -28,7 +28,7 @@ class BasicInfo(commands.Cog):
                 f'[!membercardsranked [clan_tag] [filter]]({url}) - Does same thing as `!ausclan` but '
                 'for the specific [clan_tag] instead.',
                 f'[!boatattack [clan_tag]]({url}) - Does same thing as `!ausclanboat` but for the specific [clan_tag] instead.',
-                f' [!riverwar [clan_tag] [weeks]]({url}) - Does same thing as `!ausclanwar` but for the specific [clan_tag] instead.'
+                f'[!riverwar [clan_tag] [weeks]]({url}) - Does same thing as `!ausclanwar` but for the specific [clan_tag] instead.'
             ]
             embed.add_field(name='Ausclan commands', value='\n'.join(ausclan_cmds), inline=False)
             embed.add_field(name='Other commands', value='\n'.join(generic_cmds), inline=False)

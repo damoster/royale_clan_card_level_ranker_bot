@@ -1,7 +1,7 @@
 import copy
 from functools import cmp_to_key
 from multiprocessing import Pool
-from typing import Dict
+from typing import Dict, Tuple, Any
 
 from clash_royale_client import ClashRoyaleClient
 from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, PlayerActivity, MIN_FAME_WEEK
@@ -130,10 +130,10 @@ class ClashRoyaleService:
     '''
     River Race Player Activity History Functions
     '''
-    def clan_river_race_history(self, clan_tag: str, past_weeks: int = 4) -> Dict[str, PlayerActivity]:
+    def clan_river_race_history(self, clan_tag: str, past_weeks: int = 4) -> Tuple[Dict[str, Any], Dict[str, PlayerActivity]]:
         clan_players_war_history = {}
-        client_clan_info = self.clash_royale_client.get_clan_info(clan_tag)
-        members_list = client_clan_info['memberList']
+        clan_info = self.clash_royale_client.get_clan_info(clan_tag)
+        members_list = clan_info['memberList']
         for member in members_list:
             clan_players_war_history[member['tag']] = PlayerActivity(
                 tag = member['tag'],
@@ -143,7 +143,7 @@ class ClashRoyaleService:
                 fame_hist = [None]* past_weeks,
                 boat_attacks_hist = [None]* past_weeks
             )
-        return client_clan_info, self.past_weeks_clan_war(clan_players_war_history, clan_tag, past_weeks)
+        return clan_info, self.past_weeks_clan_war(clan_players_war_history, clan_tag, past_weeks)
 
     def past_weeks_clan_war(self, clan_players_war_history: Dict[str, PlayerActivity], clan_tag: str, past_weeks: int = 4) -> Dict[str, PlayerActivity]:
         client_race_log_api_response = self.clash_royale_client.get_river_race_log(clan_tag)
