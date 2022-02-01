@@ -67,35 +67,13 @@ def boat_attackers_embed(boat_attackers, clan_info):
 def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActivity]):
     embed = discord.Embed(
         description=dedent('''
-            Clan River Race History
+            ** ausclanwar **
+            ElderWorthy means player obtains minimum of 1200 fame per week over past 4 weeks. 
+            Doing 3/4 war days and losing all of them. i.e. 1200 = 3 days x 4 decks x 100 fame per non-boat-attack-loss.
+            Order of the FameHistory - First item is fame from 1 week ago, then 2, 3, 4.
         '''.format()),
         colour=discord.Colour.green()
     )
-    # columns = 'War Active | Elder Worthy | Name | Role | Level | Fame History | Boat Attack History | Average Fame'
-    # row_values = []
-    # for player_tag in clan_players_war_history:
-    #     player = clan_players_war_history[player_tag]
-    #     row_val = '` {} `|` {} `|` {} `|` {} `|` {} `|` {} `|` {} `|` {} '.format(
-    #         player.war_active, player.elder_worthy, player.name, player.role , player.exp_level , player.fame_hist, player.boat_attacks_hist, player.avg_fame
-    #     )
-    #     row_values.append(row_val)
-    # columns = '**WarActive** | **ElderWorthy** | **AvgFame** | **Name** | **Role**'
-    # row_promote = []
-    # row_demote = []
-    # row_final = []
-    # for player_tag in clan_players_war_history:
-    #     player = clan_players_war_history[player_tag]
-    #     row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | ` {:>} ` | **{:>}**'.format(
-    #         'Y' if player.war_active else 'N',
-    #         'Y' if player.elder_worthy else 'N',
-    #         player.avg_fame,
-    #         player.role,
-    #         player.name
-    #     )
-    #     if player.war_active and player.elder_worthy and player.role == 'member':
-    #         row_promote.append(row_val)
-    #     elif not player.war_active:
-    #         row_demote.append(row_val)
 
     columns = '**WarActive** | **ElderWorthy** | **FameHistory** | **Name**'
     row_promote = []
@@ -106,7 +84,7 @@ def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActi
         row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | ` {:>} `'.format(
             'Y' if player.war_active else 'N',
             'Y' if player.elder_worthy else 'N',
-            [ i if isinstance(i, int) else '' for i in player.fame_hist ],
+            ",".join(["{:^4}".format(x) if isinstance(x, int) else '_' for x in player.fame_hist]),
             player.name
         )
         if player.war_active and player.elder_worthy and player.role == 'member':
@@ -114,7 +92,7 @@ def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActi
         elif not player.war_active:
             row_demote.append(row_val)
     
-    row_final = ['**TO PROMOTE**'] + row_promote + ['**TO DEMOTE**'] + row_demote
+    row_final = ['**PROMOTE**'] + row_promote + ['**DEMOTE/KICK**'] + row_demote
     row_final = '\n'.join(row_final)
     if len(row_final) >= MAX_DISCORD_ENBED:
         row_final = row_final[:MAX_DISCORD_ENBED]
@@ -196,9 +174,7 @@ class ClashRiverWar(commands.Cog):
     @commands.command(name="ausclanwar", pass_context=True)
     async def playersclanwar(self, ctx, past_weeks=4):
         async with ctx.typing():
-            logging.info("Fetching Clan River Race History")
             clan_players_war_history = self.clash_royale_service.clan_river_race_history('9GULPJ9L', past_weeks)
-            logging.info("Completed Fetching Clan River Race History")
         embed = clan_river_race_history_embed(clan_players_war_history)
         await ctx.send(embed=embed)
 
