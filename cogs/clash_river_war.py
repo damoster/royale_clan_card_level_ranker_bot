@@ -7,7 +7,7 @@ from typing import Dict
 
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
 from clash_royale_service import ClashRoyaleService
-from common.schemas import PlayerActivity, MAX_DISCORD_ENBED
+from common.schemas import PlayerActivity, MAX_DISCORD_EMBED
 
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
@@ -82,7 +82,7 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
     columns = '**WarActive** | **ElderWorthy** | **FameHistory** | **Name** | **Role**'
     row_promote = []
     row_demote = []
-    row_final = []
+    final_str = []
     for player_tag in clan_players_war_history:
         player = clan_players_war_history[player_tag]
         row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | {:>} | {}'.format(
@@ -97,12 +97,13 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
         elif not player.war_active:
             row_demote.append(row_val)
     
-    row_final = ['**PROMOTE**'] + row_promote + ['**DEMOTE/KICK**'] + row_demote
-    row_final = '\n'.join(row_final)
-    logging.info("embedded content length is: " + str(len(row_final)))
-    if len(row_final) >= MAX_DISCORD_ENBED:
-        row_final = row_final[:MAX_DISCORD_ENBED]
-    embed.add_field(name=columns, value=row_final, inline=False)
+    final_str = ['**PROMOTE**'] + row_promote + ['**DEMOTE/KICK**'] + row_demote
+    final_str = '\n'.join(final_str)
+    logging.info("embedded content length is: " + str(len(final_str)))
+    if len(final_str) >= MAX_DISCORD_EMBED:
+        warn_msg = "\nNote: Final output has been truncated due to exceeding limit 1024"
+        final_str = final_str[:(MAX_DISCORD_EMBED-len(warn_msg))] + warn_msg
+    embed.add_field(name=columns, value=final_str, inline=False)
     return embed
 
 

@@ -10,7 +10,7 @@ MAX_CARD_LEVEL = 14
 MIN_FAME_WEEK = 1200
 
 # Maximum discord embed length, if greater, discord bot will error
-MAX_DISCORD_ENBED = 1024
+MAX_DISCORD_EMBED = 1024
 @dataclass
 class PlayerActivity:
     '''
