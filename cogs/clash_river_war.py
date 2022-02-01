@@ -64,7 +64,7 @@ def boat_attackers_embed(boat_attackers, clan_info):
 
     return embed
 
-def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActivity]):
+def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dict[str, PlayerActivity]):
     embed = discord.Embed(
         description=dedent('''
             **ElderWorthy** means player obtains minimum of 1200 fame per week over past 4 weeks. 
@@ -75,7 +75,7 @@ def clan_river_race_history_embed(clan_players_war_history: Dict[str, PlayerActi
     )
 
     embed.set_author(
-        name='AUSCLAN',
+        name=clan_info['name'],
         icon_url='https://static.wikia.nocookie.net/clashroyale/images/9/9f/War_Shield.png/revision/latest/scale-to-width-down/250?cb=20180425130200'
     )
 
@@ -171,17 +171,18 @@ class ClashRiverWar(commands.Cog):
     async def ausclanboat(self, ctx):
         await self.boatattack(ctx, '9GULPJ9L')
 
-    @commands.command(name="playersclanwar", pass_context=True)
-    async def playersclanwar(self, ctx, clan_tag: str, past_weeks=4):
-        clan_players_war_history = self.clash_royale_service.clan_river_race_history(clan_tag, past_weeks)
-        embed = clan_river_race_history_embed(clan_players_war_history)
+    @commands.command(name="ausclanwar", pass_context=True)
+    async def ausclanwar(self, ctx, past_weeks=4):
+        async with ctx.typing():
+            clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history('9GULPJ9L', past_weeks)
+        embed = clan_river_race_history_embed(clan_info, clan_players_war_history)
         await ctx.send(embed=embed)
 
-    @commands.command(name="ausclanwar", pass_context=True)
-    async def playersclanwar(self, ctx, past_weeks=4):
+    @commands.command(name="riverwar", pass_context=True)
+    async def riverwar(self, ctx, clan_tag: str, past_weeks=4):
         async with ctx.typing():
-            clan_players_war_history = self.clash_royale_service.clan_river_race_history('9GULPJ9L', past_weeks)
-        embed = clan_river_race_history_embed(clan_players_war_history)
+            clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history(clan_tag, past_weeks)
+        embed = clan_river_race_history_embed(clan_info, clan_players_war_history)
         await ctx.send(embed=embed)
 
 def setup(client):

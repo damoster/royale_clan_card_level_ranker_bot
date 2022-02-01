@@ -143,7 +143,7 @@ class ClashRoyaleService:
                 fame_hist = [None]* past_weeks,
                 boat_attacks_hist = [None]* past_weeks
             )
-        return self.past_weeks_clan_war(clan_players_war_history, clan_tag, past_weeks)
+        return client_clan_info, self.past_weeks_clan_war(clan_players_war_history, clan_tag, past_weeks)
 
     def past_weeks_clan_war(self, clan_players_war_history: Dict[str, PlayerActivity], clan_tag: str, past_weeks: int = 4) -> Dict[str, PlayerActivity]:
         client_race_log_api_response = self.clash_royale_client.get_river_race_log(clan_tag)
