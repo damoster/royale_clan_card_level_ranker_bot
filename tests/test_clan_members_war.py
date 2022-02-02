@@ -59,8 +59,11 @@ class TestRiverRaceLog(unittest.TestCase):
         )
 
         # Testing if three players is returned based on get clan info
-        _, clan_players_war_history = clan_members_war.clan_river_race_history(clan_tag)
+        clan_info, clan_players_war_history = clan_members_war.clan_river_race_history(clan_tag)
         self.assertEqual(len(clan_players_war_history), 3)
+        
+        # Testing if clan_info is returned properly
+        self.assertEqual(clan_info, clash_royale_client_responses.CLAN_INFO_API_RESPONSE)
 
         # Testing for expected output of a single player
         joseph_activity = PlayerActivity(tag='#8VUG0GQRY', name='joseph', role='elder', exp_level=13, fame_hist=[2650, 2800, 2500, 3100], boat_attacks_hist=[0, 0, 0, 0], war_active=True, elder_worthy=True, avg_fame=2762.5)
