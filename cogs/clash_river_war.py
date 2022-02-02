@@ -3,8 +3,11 @@ from discord.ext import commands
 from textwrap import dedent
 from common import schemas
 import logging
+from typing import Dict
+
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
 from clash_royale_service import ClashRoyaleService
+from common.schemas import PlayerActivity, MAX_DISCORD_EMBED
 
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
@@ -59,6 +62,48 @@ def boat_attackers_embed(boat_attackers, clan_info):
             row_values.append(row_val)
         embed.add_field(name=columns, value='\n'.join(row_values), inline=False)
 
+    return embed
+
+def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dict[str, PlayerActivity]):
+    embed = discord.Embed(
+        description=dedent('''
+            **ElderWorthy** means player obtains minimum of 1200 fame per week over past 4 weeks. 
+            Doing 3/4 war days and losing all of them. i.e. 1200 = 3 days x 4 decks x 100 fame per non-boat-attack-loss.
+            Order of the **FameHistory** - First item is fame from 1 week ago, then 2, 3, 4.
+        '''.format()),
+        colour=discord.Colour.green()
+    )
+
+    embed.set_author(
+        name=clan_info['name'],
+        icon_url='https://static.wikia.nocookie.net/clashroyale/images/9/9f/War_Shield.png/revision/latest/scale-to-width-down/250?cb=20180425130200'
+    )
+
+    columns = '**WarActive** | **ElderWorthy** | **FameHistory** | **Name** | **Role**'
+    row_promote = []
+    row_demote = []
+    final_str = []
+    for player_tag in clan_players_war_history:
+        player = clan_players_war_history[player_tag]
+        row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | {:>} | {}'.format(
+            'Y' if player.war_active else 'N',
+            'Y' if player.elder_worthy else 'N',
+            ",".join(["{:^4}".format(x) if isinstance(x, int) else '_' for x in player.fame_hist]),
+            player.name,
+            player.role
+        )
+        if player.war_active and player.elder_worthy and player.role == 'member':
+            row_promote.append(row_val)
+        elif not player.war_active:
+            row_demote.append(row_val)
+    
+    final_str = ['**PROMOTE**'] + row_promote + ['**DEMOTE/KICK**'] + row_demote
+    final_str = '\n'.join(final_str)
+    logging.info("embedded content length is: " + str(len(final_str)))
+    if len(final_str) >= MAX_DISCORD_EMBED:
+        warn_msg = "\nNote: Final output has been truncated due to exceeding limit 1024"
+        final_str = final_str[:(MAX_DISCORD_EMBED-len(warn_msg))] + warn_msg
+    embed.add_field(name=columns, value=final_str, inline=False)
     return embed
 
 
@@ -127,6 +172,19 @@ class ClashRiverWar(commands.Cog):
     async def ausclanboat(self, ctx):
         await self.boatattack(ctx, '9GULPJ9L')
 
+    @commands.command(name="ausclanwar", pass_context=True)
+    async def ausclanwar(self, ctx, past_weeks=4):
+        async with ctx.typing():
+            clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history('9GULPJ9L', past_weeks)
+        embed = clan_river_race_history_embed(clan_info, clan_players_war_history)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="riverwar", pass_context=True)
+    async def riverwar(self, ctx, clan_tag: str, past_weeks=4):
+        async with ctx.typing():
+            clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history(clan_tag, past_weeks)
+        embed = clan_river_race_history_embed(clan_info, clan_players_war_history)
+        await ctx.send(embed=embed)
 
 def setup(client):
     client.add_cog(ClashRiverWar(client))
