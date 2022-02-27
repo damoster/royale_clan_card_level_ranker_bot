@@ -6,6 +6,7 @@ import requests
 class ClashRoyaleClient:
     def __init__(self):
         # self.base_url = 'https://api.clashroyale.com/v1' - Leaving the original Royal API url as it might be needed in the future
+        # Proxy solution provided by supercell requires us to use this base url to work around household dynamic IP addresses problem. For more details see https://docs.royaleapi.com/#/proxy
         self.base_url = 'https://proxy.royaleapi.dev/v1'
         self.auth_token = os.getenv('ROYALE_API_KEY')
         self.request_headers = {'Authorization': 'Bearer {}'.format(self.auth_token)}
