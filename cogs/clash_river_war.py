@@ -5,9 +5,9 @@ from common import schemas
 import logging
 from typing import Dict
 
-from royale_api_website_scraper import RoyaleApiWebsiteScraper
 from clash_royale_service import ClashRoyaleService
 from common.schemas import PlayerActivity, MAX_DISCORD_EMBED
+from royale_api_website_scraper import RoyaleApiWebsiteScraper
 
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
@@ -36,7 +36,8 @@ def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_a
         )
         rank_values.append(rank_text_row)
     field_name = '**Rank** | **# of lvl (14, 13), 12, 11** | **Player Name**'
-    embed.add_field(name=field_name, value='\n'.join(rank_values), inline=False)
+    embed.add_field(name=field_name, value='\n'.join(
+        rank_values), inline=False)
 
     return embed
 
@@ -60,9 +61,11 @@ def boat_attackers_embed(boat_attackers, clan_info):
                 p[5], p[6], p[1]
             )
             row_values.append(row_val)
-        embed.add_field(name=columns, value='\n'.join(row_values), inline=False)
+        embed.add_field(name=columns, value='\n'.join(
+            row_values), inline=False)
 
     return embed
+
 
 def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dict[str, PlayerActivity]):
     embed = discord.Embed(
@@ -88,7 +91,8 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
         row_val = '` {:^1} ` | ` {:^1} ` | ` {} ` | **{}** | {}'.format(
             'Y' if player.war_active else 'N',
             'Y' if player.elder_worthy else 'N',
-            ",".join(["{:^4}".format(x) if isinstance(x, int) else '_' for x in player.fame_hist]),
+            ",".join(["{:^4}".format(x) if isinstance(x, int)
+                     else '_' for x in player.fame_hist]),
             player.name,
             player.role
         )
@@ -96,8 +100,9 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
             row_promote.append(row_val)
         elif not player.war_active:
             row_demote.append(row_val)
-    
-    final_str = ['**PROMOTE**'] + row_promote + ['**DEMOTE/KICK**'] + row_demote
+
+    final_str = ['**PROMOTE**'] + row_promote + \
+        ['**DEMOTE/KICK**'] + row_demote
     final_str = '\n'.join(final_str)
     logging.info("embedded content length is: " + str(len(final_str)))
     if len(final_str) >= MAX_DISCORD_EMBED:
@@ -164,9 +169,19 @@ class ClashRiverWar(commands.Cog):
     @commands.command(name="boatattack", pass_context=True)
     async def boatattack(self, ctx, clan_tag):
         async with ctx.typing():
-            clan_info, war_partitipation_table = self.royale_api_website_scraper.get_war_participation_table(clan_tag)
+            clan_info, war_partitipation_table = self.royale_api_website_scraper.get_war_participation_table(
+                clan_tag)
             embed = boat_attackers_embed(war_partitipation_table, clan_info)
         await ctx.send(embed=embed)
+
+    @boatattack.error
+    async def boatattack_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(embed=discord.Embed(
+                description="Incorrect arguments entered.\nCorrect usage: **!boatattack [clan_tag]**" +
+                "\nOr use the AUSCLAN version: **!ausclanboat**",
+                colour=discord.Colour.red()
+            ))
 
     @commands.command(name="ausclanboat", pass_context=True)
     async def ausclanboat(self, ctx):
@@ -175,16 +190,30 @@ class ClashRiverWar(commands.Cog):
     @commands.command(name="ausclanwar", pass_context=True)
     async def ausclanwar(self, ctx, past_weeks=4):
         async with ctx.typing():
-            clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history('9GULPJ9L', past_weeks)
-        embed = clan_river_race_history_embed(clan_info, clan_players_war_history)
+            clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history(
+                '9GULPJ9L', past_weeks)
+        embed = clan_river_race_history_embed(
+            clan_info, clan_players_war_history)
         await ctx.send(embed=embed)
 
     @commands.command(name="riverwar", pass_context=True)
     async def riverwar(self, ctx, clan_tag: str, past_weeks=4):
         async with ctx.typing():
-            clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history(clan_tag, past_weeks)
-        embed = clan_river_race_history_embed(clan_info, clan_players_war_history)
+            clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history(
+                clan_tag, past_weeks)
+        embed = clan_river_race_history_embed(
+            clan_info, clan_players_war_history)
         await ctx.send(embed=embed)
+
+    @riverwar.error
+    async def riverwar_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(embed=discord.Embed(
+                description="Incorrect arguments entered.\nCorrect usage: **!riverwar [clan_tag] [past_weeks]**" +
+                "\nOr use the AUSCLAN version: **!ausclanwar**",
+                colour=discord.Colour.red()
+            ))
+
 
 def setup(client):
     client.add_cog(ClashRiverWar(client))
