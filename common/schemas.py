@@ -14,8 +14,8 @@ MAX_DISCORD_EMBED = 1024
 
 
 # Maximum limit for decks used in a clan - 50 players * 4 decks
-MAX_DECK_PER_WAR = 200
-DECK_PER_PLAYER = 4
+PARTICIPANTS_LIMIT = 50
+MAX_DECK_PER_PLAYER = 4
 
 @dataclass
 class PlayerActivity:

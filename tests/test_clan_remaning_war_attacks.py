@@ -94,8 +94,8 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
         assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].decks_remaining == 189
         assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].players_remaining == 1
 
-        # Test Cases 3 - PERU CB
-        # All 3 players partipated (one left the clan doing 2 attacks), 189 decks remaining (200 - (4+4+3)), 1 players remaining
-        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].participated == 3
-        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].decks_remaining == 189
-        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].players_remaining == 1
+        # Test Cases 3 - A Lithuania
+        # 2 players partipated, 193 decks remaining (200 - (4+3)), 2 players remaining
+        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].participated == 2
+        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].decks_remaining == 193
+        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].players_remaining == 2
