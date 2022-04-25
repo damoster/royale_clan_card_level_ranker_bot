@@ -42,7 +42,30 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
             {"tag": "C"}
         ]
         assert service._get_players_remaining(participants, members_list) == 2
-    
+    def test_get_decks_remaining(self):
+        service = ClashRoyaleService()
+        participants = [
+            {"tag": "A", "decksUsedToday": 1},
+            {"tag": "B", "decksUsedToday": 2},
+            {"tag": "C", "decksUsedToday": 4},
+            {"tag": "D", "decksUsedToday": 2}
+        ]
+        # Test 1 - All players are in clan and used some number of decks
+        members_list = [
+            {"tag": "B"},
+            {"tag": "A"},
+            {"tag": "C"},
+            {"tag": "D"}
+        ]
+        assert service._get_decks_remaining(participants, members_list) == 191
+        # Test 2 - Since D left, deckUsedToday for player D is 4 -> (200 - (1+2+4+4))
+        members_list = [
+            {"tag": "B"},
+            {"tag": "A"},
+            {"tag": "C"}
+        ]
+        assert service._get_decks_remaining(participants, members_list) == 189
+
     def test_clan_remaining_war_attacks(self):
         service = ClashRoyaleService()
         clan_tag = "#9GULPJ9L"
