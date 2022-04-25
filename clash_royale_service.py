@@ -247,4 +247,5 @@ class ClashRoyaleService:
                 )
             )
 
+        all_clan_attacks.sort(key=lambda x:x.medals, reverse=True)
         return all_clan_attacks

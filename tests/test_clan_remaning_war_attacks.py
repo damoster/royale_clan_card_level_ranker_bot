@@ -122,3 +122,10 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
         assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].participated == 2
         assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].decks_remaining == 193
         assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].players_remaining == 2
+
+        # Test Case 4 - Testing the sorting order based on the medals decending
+        sorted_list = [clan_attacks.medals for clan_attacks in all_clan_attacks]
+        for i in range(len(sorted_list) - 1):
+            if sorted_list[i] < sorted_list[i+1]:
+                assert False
+        assert True
