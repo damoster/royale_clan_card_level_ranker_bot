@@ -78,8 +78,24 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
             clash_royale_client_responses.CLAN_INFO_API_RESPONSE
         )
 
-        service.clan_remaining_war_attacks(clan_tag)
-
-
+        all_clan_attacks = service.clan_remaining_war_attacks(clan_tag)
         
-        assert 1 == 1
+        # Test Cases 1 - Ausclan
+        # All 3 players partipated, 191 decks remaining (200 - (4+3+2)), 2 players remaining
+        organised_all_clan_attacks = {clan_attacks.tag: clan_attacks for clan_attacks in all_clan_attacks}
+        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]].participated == 3
+        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]].decks_remaining == 191
+        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]].players_remaining == 2
+
+
+        # Test Cases 2 - PERU CB
+        # All 3 players partipated (one left the clan doing 2 attacks), 189 decks remaining (200 - (4+4+3)), 1 players remaining
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].participated == 3
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].decks_remaining == 189
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].players_remaining == 1
+
+        # Test Cases 3 - PERU CB
+        # All 3 players partipated (one left the clan doing 2 attacks), 189 decks remaining (200 - (4+4+3)), 1 players remaining
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].participated == 3
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].decks_remaining == 189
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].players_remaining == 1

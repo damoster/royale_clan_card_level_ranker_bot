@@ -5,7 +5,7 @@ from multiprocessing import Pool
 from typing import Dict, List, Tuple, Any
 
 from clash_royale_client import ClashRoyaleClient
-from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, ClanRemainingWarAttacks, PlayerActivity, MIN_FAME_WEEK
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, ClanRemainingWarAttacks, PlayerActivity, MIN_FAME_WEEK, PARTICIPANTS_LIMIT, MAX_DECK_PER_PLAYER
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -192,9 +192,21 @@ class ClashRoyaleService:
         return count
 
     def _get_decks_remaining(self, participants: List[Any], clan_members: List[Any]) -> int:
-        return -1
+        tag_to_player_war = {person["tag"]: person for person in participants}
+        tag_to_player_clan = [person["tag"] for person in clan_members]
+        num_players_left_clan = 0
+        num_decks_players_in_clan = 0
+        for player in tag_to_player_war:
+            if player not in tag_to_player_clan:
+                # Assuming that player leaving the clan will not come back, and they will take up all 4 decks
+                num_players_left_clan += 1
+            else:
+                num_decks_players_in_clan += tag_to_player_war[player]["decksUsedToday"]
+
+        return  MAX_DECK_PER_PLAYER*(PARTICIPANTS_LIMIT - num_players_left_clan) - num_decks_players_in_clan
 
     def _get_players_remaining(self, participants: List[Any], clan_members: List[Any]) -> int:
+        # Identifies players in the clan that hasn't done their wars yet
         tag_to_player_war = {person["tag"]: person for person in participants}
         tag_to_player_clan = [person["tag"] for person in clan_members]
 
@@ -202,7 +214,7 @@ class ClashRoyaleService:
         for tag in tag_to_player_clan:
             # Assumption: anyone in clan should also be in war_log_history
             if tag not in tag_to_player_war:
-                log.war(
+                log.info(
                     f"player tag: {tag}, is not in currentriverrace response")
                 continue
             if tag_to_player_war[tag]["decksUsedToday"] != 4:
@@ -228,7 +240,7 @@ class ClashRoyaleService:
                     ),
                     decks_remaining=self._get_decks_remaining(
                         clan_river_info["participants"], clan_info["memberList"]
-                    ),  # TODO: add later
+                    ),
                     players_remaining=self._get_players_remaining(
                         clan_river_info["participants"], clan_info["memberList"]
                     ),
