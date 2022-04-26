@@ -2,7 +2,7 @@
 import unittest
 from mockito import when
 from clash_royale_service import ClashRoyaleService
-from resources import clash_royale_client_currentriverrace, clash_royale_client_responses
+from tests.resources import clash_royale_client_currentriverrace, clash_royale_client_responses
 
 
 class TestClanRemainingWarAttacks(unittest.TestCase):
