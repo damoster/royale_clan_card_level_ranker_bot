@@ -42,6 +42,7 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
             {"tag": "C"}
         ]
         assert service._get_players_remaining(participants, members_list) == 2
+
     def test_get_decks_remaining(self):
         service = ClashRoyaleService()
         participants = [
@@ -102,30 +103,39 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
         )
 
         all_clan_attacks = service.clan_remaining_war_attacks(clan_tag)
-        
+
         # Test Cases 1 - Ausclan
         # All 3 players partipated, 191 decks remaining (200 - (4+3+2)), 2 players remaining
-        organised_all_clan_attacks = {clan_attacks.tag: clan_attacks for clan_attacks in all_clan_attacks}
-        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]].participated == 3
-        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]].decks_remaining == 191
-        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]].players_remaining == 2
-
+        organised_all_clan_attacks = {
+            clan_attacks.tag: clan_attacks for clan_attacks in all_clan_attacks}
+        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]
+                                          ].participated == 3
+        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]
+                                          ].decks_remaining == 191
+        assert organised_all_clan_attacks[other_clan_tag["AUSCLAN"]
+                                          ].players_remaining == 2
 
         # Test Cases 2 - PERU CB
         # All 3 players partipated (one left the clan doing 2 attacks), 189 decks remaining (200 - (4+4+3)), 1 players remaining
-        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].participated == 3
-        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].decks_remaining == 189
-        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]].players_remaining == 1
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]
+                                          ].participated == 3
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]
+                                          ].decks_remaining == 189
+        assert organised_all_clan_attacks[other_clan_tag["PERU CB"]
+                                          ].players_remaining == 1
 
         # Test Cases 3 - A Lithuania
         # 2 players partipated, 193 decks remaining (200 - (4+3)), 2 players remaining
-        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].participated == 2
-        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].decks_remaining == 193
-        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]].players_remaining == 2
+        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]
+                                          ].participated == 2
+        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]
+                                          ].decks_remaining == 193
+        assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]
+                                          ].players_remaining == 2
 
         # Test Case 4 - Testing the sorting order based on the medals decending
-        sorted_list = [clan_attacks.medals for clan_attacks in all_clan_attacks]
+        sorted_list = [
+            clan_attacks.medals for clan_attacks in all_clan_attacks]
         for i in range(len(sorted_list) - 1):
             if sorted_list[i] < sorted_list[i+1]:
                 assert False
-        assert True

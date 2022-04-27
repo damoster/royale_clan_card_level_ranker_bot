@@ -193,22 +193,22 @@ class ClashRoyaleService:
 
     def _get_decks_remaining(self, participants: List[Any], clan_members: List[Any]) -> int:
         tag_to_player_war = {person["tag"]: person for person in participants}
-        tag_to_player_clan = [person["tag"] for person in clan_members]
+        tag_to_player_clan = {person["tag"] for person in clan_members}
         num_players_left_clan = 0
         num_decks_players_in_clan = 0
         for player in tag_to_player_war:
-            if player not in tag_to_player_clan:
+            if player not in tag_to_player_clan and tag_to_player_war[player]['decksUsedToday'] != 0:
                 # Assuming that player leaving the clan will not come back, and they will take up all 4 decks
                 num_players_left_clan += 1
             else:
                 num_decks_players_in_clan += tag_to_player_war[player]["decksUsedToday"]
 
-        return  MAX_DECK_PER_PLAYER*(PARTICIPANTS_LIMIT - num_players_left_clan) - num_decks_players_in_clan
+        return MAX_DECK_PER_PLAYER*(PARTICIPANTS_LIMIT - num_players_left_clan) - num_decks_players_in_clan
 
     def _get_players_remaining(self, participants: List[Any], clan_members: List[Any]) -> int:
         # Identifies players in the clan that hasn't done their wars yet
         tag_to_player_war = {person["tag"]: person for person in participants}
-        tag_to_player_clan = [person["tag"] for person in clan_members]
+        tag_to_player_clan = {person["tag"] for person in clan_members}
 
         count = 0
         for tag in tag_to_player_clan:
@@ -247,5 +247,5 @@ class ClashRoyaleService:
                 )
             )
 
-        all_clan_attacks.sort(key=lambda x:x.medals, reverse=True)
+        all_clan_attacks.sort(key=lambda x: x.medals, reverse=True)
         return all_clan_attacks

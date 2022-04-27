@@ -13,7 +13,7 @@ MIN_FAME_WEEK = 1200
 MAX_DISCORD_EMBED = 1024
 
 
-# Maximum limit for decks used in a clan - 50 players * 4 decks
+# Maximum Participants to participate in war is 50, and they can use a max of 4 decks per day
 PARTICIPANTS_LIMIT = 50
 MAX_DECK_PER_PLAYER = 4
 
