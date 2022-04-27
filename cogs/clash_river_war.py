@@ -106,6 +106,21 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
     embed.add_field(name=columns, value=final_str, inline=False)
     return embed
 
+def remaining_war_embed(all_clan_attacks):
+    embed = discord.Embed(
+        description=dedent('''
+            Put Description Here
+        '''.format()),
+        colour=discord.Colour.green()
+    )
+
+    columns = '**Clan** | **Medals** | **Participated** | **DecksRemaining** | **PlayersRemaining**'
+    final_str = []
+    for clan_attacks in all_clan_attacks:
+        final_str.append(f'{clan_attacks.name} ` | ` {clan_attacks.medals} ` | ` {clan_attacks.participated} ` | {clan_attacks.decks_remaining} | {clan_attacks.players_remaining}')
+    final_str = '\n'.join(final_str)
+    embed.add_field(name=columns, value=final_str, inline=False)
+    return embed
 
 class ClashRiverWar(commands.Cog):
     def __init__(self, client):
@@ -184,6 +199,14 @@ class ClashRiverWar(commands.Cog):
         async with ctx.typing():
             clan_info, clan_players_war_history = self.clash_royale_service.clan_river_race_history(clan_tag, past_weeks)
         embed = clan_river_race_history_embed(clan_info, clan_players_war_history)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="ausclanremaining", pass_context=True)
+    async def ausclanRemainingWarAttacks(self, ctx):
+        async with ctx.typing():
+            all_clan_attacks = self.clash_royale_service.clan_remaining_war_attacks('9GULPJ9L')
+            logging.info(all_clan_attacks)
+        embed = remaining_war_embed(all_clan_attacks)
         await ctx.send(embed=embed)
 
 def setup(client):
