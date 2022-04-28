@@ -46,6 +46,7 @@ class ClanRemainingWarAttacks:
     tag: str
     name: str
     medals: int
+    fame: int
     participated: int
     decks_remaining: int
     players_remaining: int

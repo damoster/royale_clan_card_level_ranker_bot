@@ -121,8 +121,8 @@ PER_CLAN_INFO_API_RESPONSE = {
 }
 
 LIT_CLAN_INFO_API_RESPONSE = {
-  "tag": "#P8UGJRGY",
-  "name": "PERU CB",
+  "tag": "#UQ8VVR",
+  "name": "A Lithuania",
   "type": "open",
   "memberList": [
     {
@@ -180,8 +180,8 @@ LIT_CLAN_INFO_API_RESPONSE = {
 }
 
 RED_CLAN_INFO_API_RESPONSE = {
-  "tag": "#P8UGJRGY",
-  "name": "PERU CB",
+  "tag": "#PR2U99V",
+  "name": "Red Hot Chile",
   "type": "open",
   "memberList": [
     {
@@ -198,23 +198,6 @@ RED_CLAN_INFO_API_RESPONSE = {
       "clanRank": 5,
       "previousClanRank": 7,
       "donations": 36,
-      "donationsReceived": 160,
-      "clanChestPoints": 0
-    },
-    {
-      "tag": "#REDUSER2",
-      "name": "REDUSER2",
-      "role": "elder",
-      "lastSeen": "20210617T122354.000Z",
-      "expLevel": 13,
-      "trophies": 5501,
-      "arena": {
-        "id": 54000013,
-        "name": "Challenger II"
-      },
-      "clanRank": 4,
-      "previousClanRank": 5,
-      "donations": 68,
       "donationsReceived": 160,
       "clanChestPoints": 0
     },
@@ -239,8 +222,8 @@ RED_CLAN_INFO_API_RESPONSE = {
 }
 
 ROY_CLAN_INFO_API_RESPONSE = {
-  "tag": "#P8UGJRGY",
-  "name": "PERU CB",
+  "tag": "#2ULLJPUC",
+  "name": "Royal Crusade",
   "type": "open",
   "memberList": [
     {

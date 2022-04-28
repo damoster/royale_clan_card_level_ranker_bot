@@ -113,12 +113,13 @@ def remaining_war_embed(all_clan_attacks):
         '''.format()),
         colour=discord.Colour.green()
     )
-    columns = '**Clan**|**Medals**|**Participated**|**DecksRemaining**|**PlayersRemaining**'
+    columns = '**Clan**|**Medals**|**Fame**|**Participated**|**DecksRemaining**|**PlayersRemaining**'
     row_val = []
     for clan_attacks in all_clan_attacks:
-        row_val.append('`{:^15}`|`{:^5}`|`{:^6}`|`{:^9}`|`{:^10}`'.format(
+        row_val.append('`{:^15}`|`{:^5}`|`{:^6}`|`{:^6}`|`{:^9}`|`{:^10}`'.format(
             clan_attacks.name,
             clan_attacks.medals,
+            clan_attacks.fame,
             str(clan_attacks.participated) + '/50',
             str(clan_attacks.decks_remaining) + ' decks',
             str(clan_attacks.players_remaining) + ' players'
