@@ -1,11 +1,12 @@
 
+import pytest
 import unittest
 from mockito import when
 from clash_royale_service import ClashRoyaleService
 from tests.resources import clash_royale_client_currentriverrace, clash_royale_client_responses
 
 
-class TestClanRemainingWarAttacks(unittest.TestCase):
+class TestClanRemainingWarAttacks(object):
 
     def test_get_participated(self):
         service = ClashRoyaleService()
@@ -43,29 +44,52 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
         ]
         assert service._get_players_remaining(participants, members_list) == 2
 
-    def test_get_decks_remaining(self):
+    @pytest.mark.parametrize(
+        "members_list, expected_decks_remaining",
+        [
+            # Test 1 - All players are in clan and used some number of decks
+            (
+                [
+                    {"tag": "B"},
+                    {"tag": "A"},
+                    {"tag": "C"},
+                    {"tag": "D"},
+                    {"tag": "E"}
+                ],
+                191
+            ),
+            # Test 2 - Since D left, deckUsedToday for player D is 4 -> (200 - (1+2+4+4))
+            (
+                [
+                    {"tag": "B"},
+                    {"tag": "A"},
+                    {"tag": "C"}
+                ],
+                189
+            ),
+            # Test 3 - Since E left and not used any decks, decks remaining is -> (200 - (1+2+4+2))
+            (
+                [
+                    {"tag": "A"},
+                    {"tag": "B"},
+                    {"tag": "C"},
+                    {"tag": "D"}
+                ],
+                191
+            )
+        ]
+    )
+    def test_get_decks_remaining(self, members_list, expected_decks_remaining):
         service = ClashRoyaleService()
         participants = [
             {"tag": "A", "decksUsedToday": 1},
             {"tag": "B", "decksUsedToday": 2},
             {"tag": "C", "decksUsedToday": 4},
-            {"tag": "D", "decksUsedToday": 2}
+            {"tag": "D", "decksUsedToday": 2},
+            {"tag": "E", "decksUsedToday": 0}
         ]
-        # Test 1 - All players are in clan and used some number of decks
-        members_list = [
-            {"tag": "B"},
-            {"tag": "A"},
-            {"tag": "C"},
-            {"tag": "D"}
-        ]
-        assert service._get_decks_remaining(participants, members_list) == 191
-        # Test 2 - Since D left, deckUsedToday for player D is 4 -> (200 - (1+2+4+4))
-        members_list = [
-            {"tag": "B"},
-            {"tag": "A"},
-            {"tag": "C"}
-        ]
-        assert service._get_decks_remaining(participants, members_list) == 189
+        assert service._get_decks_remaining(
+            participants, members_list) == expected_decks_remaining
 
     def test_clan_remaining_war_attacks(self):
         service = ClashRoyaleService()
@@ -102,6 +126,16 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
             clash_royale_client_responses.CLAN_INFO_API_RESPONSE
         )
 
+        when(service)._get_all_clan_info(['#P8UGJRGY', '#UQ8VVR', '#PR2U99V', '#2ULLJPUC', '#9GULPJ9L']).thenReturn(
+            [
+                clash_royale_client_responses.PER_CLAN_INFO_API_RESPONSE,
+                clash_royale_client_responses.LIT_CLAN_INFO_API_RESPONSE,
+                clash_royale_client_responses.RED_CLAN_INFO_API_RESPONSE,
+                clash_royale_client_responses.ROY_CLAN_INFO_API_RESPONSE,
+                clash_royale_client_responses.CLAN_INFO_API_RESPONSE
+            ]
+        )
+
         all_clan_attacks = service.clan_remaining_war_attacks(clan_tag)
 
         # Test Cases 1 - Ausclan
@@ -116,7 +150,7 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
                                           ].players_remaining == 2
 
         # Test Cases 2 - PERU CB
-        # All 3 players partipated (one left the clan doing 2 attacks), 189 decks remaining (200 - (4+4+3)), 1 players remaining
+        # All 3 players partipated (one left the clan doing 2 attacks), 189 decks remaining (200 - (4+4+3)), 1 player remaining
         assert organised_all_clan_attacks[other_clan_tag["PERU CB"]
                                           ].participated == 3
         assert organised_all_clan_attacks[other_clan_tag["PERU CB"]

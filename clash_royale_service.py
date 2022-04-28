@@ -221,15 +221,25 @@ class ClashRoyaleService:
                 count += 1
         return count
 
+    def _get_all_clan_info(self, tags: List[str]) -> list:
+        with Pool(processes=self.pool_size) as pool:
+            all_clan_info = pool.map(
+                self.clash_royale_client.get_clan_info, tags)
+        return all_clan_info
+
     def clan_remaining_war_attacks(self, clan_tag: str) -> List[ClanRemainingWarAttacks]:
         curr_river_race = self.clash_royale_client.get_current_river_race(
             clan_tag)
-
+        all_clan_info = self._get_all_clan_info(
+            [i['tag'] for i in curr_river_race["clans"]])
+        all_clan_info_dict = {
+            clan_info['tag']: clan_info for clan_info in all_clan_info}
         all_clan_attacks = []
         for clan_river_info in curr_river_race["clans"]:
             tag = clan_river_info["tag"]
-            # TODO: minor optimisation is could pull this out into separate for loop and make parallel API calls
-            clan_info = self.clash_royale_client.get_clan_info(tag)
+            # Backup: Incase multi-processing is giving an error and test is not passing
+            # clan_info = self.clash_royale_client.get_clan_info(tag)
+            clan_info = all_clan_info_dict[tag]
             all_clan_attacks.append(
                 ClanRemainingWarAttacks(
                     name=clan_river_info["name"],
