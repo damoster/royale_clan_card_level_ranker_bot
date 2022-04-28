@@ -201,23 +201,23 @@ RED_CLAN_INFO_API_RESPONSE = {
       "donationsReceived": 160,
       "clanChestPoints": 0
     },
-    {
-      "tag": "#REDUSER2",
-      "name": "REDUSER2",
-      "role": "elder",
-      "lastSeen": "20210617T122354.000Z",
-      "expLevel": 13,
-      "trophies": 5501,
-      "arena": {
-        "id": 54000013,
-        "name": "Challenger II"
-      },
-      "clanRank": 4,
-      "previousClanRank": 5,
-      "donations": 68,
-      "donationsReceived": 160,
-      "clanChestPoints": 0
-    },
+    # {
+    #   "tag": "#REDUSER2",
+    #   "name": "REDUSER2",
+    #   "role": "elder",
+    #   "lastSeen": "20210617T122354.000Z",
+    #   "expLevel": 13,
+    #   "trophies": 5501,
+    #   "arena": {
+    #     "id": 54000013,
+    #     "name": "Challenger II"
+    #   },
+    #   "clanRank": 4,
+    #   "previousClanRank": 5,
+    #   "donations": 68,
+    #   "donationsReceived": 160,
+    #   "clanChestPoints": 0
+    # },
     {
       "tag": "#REDUSER3",
       "name": "REDUSER3",

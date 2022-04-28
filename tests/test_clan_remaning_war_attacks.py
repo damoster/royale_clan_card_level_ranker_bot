@@ -133,7 +133,16 @@ class TestClanRemainingWarAttacks(unittest.TestCase):
         assert organised_all_clan_attacks[other_clan_tag["A Lithuania"]
                                           ].players_remaining == 2
 
-        # Test Case 4 - Testing the sorting order based on the medals decending
+        # Test Case 4 - Red Hot Chile
+        # 2 players participated (one left clan doing 0 attacks), 193 decks remaining (200 - (4+3)), 1 player remaining
+        assert organised_all_clan_attacks[other_clan_tag["Red Hot Chile"]
+                                          ].participated == 2
+        assert organised_all_clan_attacks[other_clan_tag["Red Hot Chile"]
+                                          ].decks_remaining == 193
+        assert organised_all_clan_attacks[other_clan_tag["Red Hot Chile"]
+                                          ].players_remaining == 1
+
+        # Test Case 5 - Testing the sorting order based on the medals decending
         sorted_list = [
             clan_attacks.medals for clan_attacks in all_clan_attacks]
         for i in range(len(sorted_list) - 1):

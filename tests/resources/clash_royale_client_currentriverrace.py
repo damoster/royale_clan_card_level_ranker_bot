@@ -137,8 +137,8 @@ CURRENT_RIVER_RACE_API_RESPONSE = {
                     "fame": 0,
                     "repairPoints": 0,
                     "boatAttacks": 0,
-                    "decksUsed": 2,
-                    "decksUsedToday": 2
+                    "decksUsed": 0,
+                    "decksUsedToday": 0
                 },
                 {
                     "tag": "#REDUSER3",
