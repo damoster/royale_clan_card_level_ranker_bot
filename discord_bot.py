@@ -29,9 +29,9 @@ class DiscordBot(commands.Bot):
             # store as info log so we know what people are trying to type into the bot
             logging.info(exc)
             # Prompts the user to use bothelp command to help them with the right command
-            message = f"{exc}. Please use !bothelp command for supported commands"
+            message = f"{exc}. Please use **!bothelp** command for supported commands"
         else:
-            message = "Oh no! Something went wrong while running the command!"
+            message = "Oh no! Something went wrong while running the command! Please use **!bothelp** command for supported commands."
             # if there are errors not handled above, raise the error and log it
             error = getattr(exc, 'original', exc)
             lines = ''.join(traceback.format_exception(

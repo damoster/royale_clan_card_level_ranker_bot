@@ -109,10 +109,16 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
 def remaining_war_embed(all_clan_attacks):
     embed = discord.Embed(
         description=dedent('''
-            Put Description Here
+            ** Current River Race Remaining War Attacks **
+            **Medals** - Accumulated Medals throughout the River Race
+            **Fame** - Fame in the Current River Race
+            **Participated** - How many players have participated in the Current River Race (1 or more attacks used)
+            **DecksRemaining** - How many decks in the clan remaining that can still be used for the Current River Race
+            **PlayersRemaining** - How many players can still do the war, ignoring those who left and those who participated already
         '''.format()),
         colour=discord.Colour.green()
     )
+
     columns = '**Clan**|**Medals**|**Fame**|**Participated**|**DecksRemaining**|**PlayersRemaining**'
     row_val = []
     for clan_attacks in all_clan_attacks:
