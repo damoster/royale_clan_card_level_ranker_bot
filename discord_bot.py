@@ -14,6 +14,13 @@ def load_cogs(client):
             logging.error(exc)
 
 
+def get_stack_trace_str(exc: Exception):
+    error = getattr(exc, 'original', exc)
+    lines = ''.join(traceback.format_exception(
+        error.__class__, error, error.__traceback__))
+    return lines
+
+
 class DiscordBot(commands.Bot):
     def __init__(self, command_prefix):
         super().__init__(command_prefix, activity=discord.Game(name="!bothelp"))
@@ -29,14 +36,14 @@ class DiscordBot(commands.Bot):
             # store as info log so we know what people are trying to type into the bot
             logging.info(exc)
             # Prompts the user to use bothelp command to help them with the right command
-            message = f"{exc}. Please use **!bothelp** command for supported commands"
+            message = f"{exc}. Please use !bothelp command for supported commands"
+        elif isinstance(exc, commands.MissingRequiredArgument):
+            message = "Command used is missing required argument"
+            logging.warn(get_stack_trace_str(exc))
         else:
             message = "Oh no! Something went wrong while running the command! Please use **!bothelp** command for supported commands."
             # if there are errors not handled above, raise the error and log it
-            error = getattr(exc, 'original', exc)
-            lines = ''.join(traceback.format_exception(
-                error.__class__, error, error.__traceback__))
-            logging.error(lines)
+            logging.error(get_stack_trace_str(exc))
 
         await ctx.send(embed=discord.Embed(
             description=message,

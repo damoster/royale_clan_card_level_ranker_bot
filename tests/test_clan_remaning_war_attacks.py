@@ -105,26 +105,28 @@ class TestClanRemainingWarAttacks(object):
         when(service.clash_royale_client).get_current_river_race(clan_tag).thenReturn(
             clash_royale_client_currentriverrace.CURRENT_RIVER_RACE_API_RESPONSE
         )
-        # MOCK CLAN INFO RESPONSE FOR PERU CB
-        when(service.clash_royale_client).get_clan_info(other_clan_tag["PERU CB"]).thenReturn(
-            clash_royale_client_responses.PER_CLAN_INFO_API_RESPONSE
-        )
-        # MOCK CLAN INFO RESPONSE FOR A Lithuania
-        when(service.clash_royale_client).get_clan_info(other_clan_tag["A Lithuania"]).thenReturn(
-            clash_royale_client_responses.LIT_CLAN_INFO_API_RESPONSE
-        )
-        # MOCK CLAN INFO RESPONSE FOR Red Hot Chile
-        when(service.clash_royale_client).get_clan_info(other_clan_tag["Red Hot Chile"]).thenReturn(
-            clash_royale_client_responses.RED_CLAN_INFO_API_RESPONSE
-        )
-        # MOCK CLAN INFO RESPONSE FOR Royal Crusade
-        when(service.clash_royale_client).get_clan_info(other_clan_tag["Royal Crusade"]).thenReturn(
-            clash_royale_client_responses.ROY_CLAN_INFO_API_RESPONSE
-        )
-        # MOCK CLAN INFO RESPONSE FOR AUSCLAN
-        when(service.clash_royale_client).get_clan_info(clan_tag).thenReturn(
-            clash_royale_client_responses.CLAN_INFO_API_RESPONSE
-        )
+
+        # Note: Commented these mock responses out because it is replaced with the multi-processing function on _get_all_clan_info. A python multi-processing bug
+        # # MOCK CLAN INFO RESPONSE FOR PERU CB
+        # when(service.clash_royale_client).get_clan_info(other_clan_tag["PERU CB"]).thenReturn(
+        #     clash_royale_client_responses.PER_CLAN_INFO_API_RESPONSE
+        # )
+        # # MOCK CLAN INFO RESPONSE FOR A Lithuania
+        # when(service.clash_royale_client).get_clan_info(other_clan_tag["A Lithuania"]).thenReturn(
+        #     clash_royale_client_responses.LIT_CLAN_INFO_API_RESPONSE
+        # )
+        # # MOCK CLAN INFO RESPONSE FOR Red Hot Chile
+        # when(service.clash_royale_client).get_clan_info(other_clan_tag["Red Hot Chile"]).thenReturn(
+        #     clash_royale_client_responses.RED_CLAN_INFO_API_RESPONSE
+        # )
+        # # MOCK CLAN INFO RESPONSE FOR Royal Crusade
+        # when(service.clash_royale_client).get_clan_info(other_clan_tag["Royal Crusade"]).thenReturn(
+        #     clash_royale_client_responses.ROY_CLAN_INFO_API_RESPONSE
+        # )
+        # # MOCK CLAN INFO RESPONSE FOR AUSCLAN
+        # when(service.clash_royale_client).get_clan_info(clan_tag).thenReturn(
+        #     clash_royale_client_responses.CLAN_INFO_API_RESPONSE
+        # )
 
         when(service)._get_all_clan_info(['#P8UGJRGY', '#UQ8VVR', '#PR2U99V', '#2ULLJPUC', '#9GULPJ9L']).thenReturn(
             [
