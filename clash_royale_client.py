@@ -9,7 +9,8 @@ class ClashRoyaleClient:
         # Proxy solution provided by supercell requires us to use this base url to work around household dynamic IP addresses problem. For more details see https://docs.royaleapi.com/#/proxy
         self.base_url = 'https://proxy.royaleapi.dev/v1'
         self.auth_token = os.getenv('ROYALE_API_KEY')
-        self.request_headers = {'Authorization': 'Bearer {}'.format(self.auth_token)}
+        self.request_headers = {
+            'Authorization': 'Bearer {}'.format(self.auth_token)}
 
     def make_request(self, request_url, method_name):
         response = requests.get(request_url, headers=self.request_headers)
@@ -18,7 +19,8 @@ class ClashRoyaleClient:
         else:
             # TODO is throwing an exception the best way of handling this? Should add exception handlinig at top level probs
             raise ValueError(
-                "[{}] recieved response code: {}. Error body: {}".format(method_name, response.status_code, response.json())
+                "[{}] recieved response code: {}. Error body: {}".format(
+                    method_name, response.status_code, response.json())
             )
 
     # url param pre-condition -> clan_tag should not have # and all caps
@@ -38,5 +40,14 @@ class ClashRoyaleClient:
     def get_river_race_log(self, clan_tag):
         cleaned_tag = clan_tag.replace('#', '').upper()
         # Note: the '%23' is # when it is in the url
-        request_url = '{}/clans/%23{}/riverracelog'.format(self.base_url, cleaned_tag)
-        return self.make_request(request_url, 'riverracelog')
+        request_url = '{}/clans/%23{}/riverracelog'.format(
+            self.base_url, cleaned_tag)
+        return self.make_request(request_url, 'get_river_race_log')
+
+    # url param pre-conditoin -> clan_tag should not have # and all caps
+    def get_current_river_race(self, clan_tag):
+        cleaned_tag = clan_tag.replace('#', '').upper()
+        # Note: the '%23' is # when it is in the url
+        request_url = '{}/clans/%23{}/currentriverrace'.format(
+            self.base_url, cleaned_tag)
+        return self.make_request(request_url, 'get_current_river_race')

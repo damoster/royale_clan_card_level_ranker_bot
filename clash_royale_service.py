@@ -1,10 +1,11 @@
+import logging as log
 import copy
 from functools import cmp_to_key
 from multiprocessing import Pool
-from typing import Dict, Tuple, Any
+from typing import Dict, List, Tuple, Any
 
 from clash_royale_client import ClashRoyaleClient
-from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, PlayerActivity, MIN_FAME_WEEK
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, ClanRemainingWarAttacks, PlayerActivity, MIN_FAME_WEEK, PARTICIPANTS_LIMIT, MAX_DECK_PER_PLAYER
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -23,8 +24,10 @@ def compare_card_levels(p1, p2):
     while compare_result == 0 and card_level > 0:
         # Not many players have a lot of level 14 cards yet, but it has a hugh weighting if we don't compare them by group level 13 and 14 cards together
         if card_level == MAX_CARD_LEVEL:
-            p1_card_count = p1['card_level_counts'][card_level] + p1['card_level_counts'][card_level - 1]
-            p2_card_count = p2['card_level_counts'][card_level] + p2['card_level_counts'][card_level - 1]
+            p1_card_count = p1['card_level_counts'][card_level] + \
+                p1['card_level_counts'][card_level - 1]
+            p2_card_count = p2['card_level_counts'][card_level] + \
+                p2['card_level_counts'][card_level - 1]
             card_level -= 2
         else:
             p1_card_count = p1['card_level_counts'][card_level]
@@ -44,6 +47,7 @@ def compute_war_active(fame_hist: list) -> bool:
             break
     return war_active
 
+
 def compute_elder_worthy(fame_hist: list) -> bool:
     elder_worthy = True
     for week in fame_hist:
@@ -52,12 +56,14 @@ def compute_elder_worthy(fame_hist: list) -> bool:
             break
     return elder_worthy
 
+
 def compute_average_fame(fame_hist: list) -> int:
     average_fame = -1
     result = [fame for fame in fame_hist if fame is not None]
     if len(result) > 0:
         average_fame = sum(result) / len(result)
     return average_fame
+
 
 class ClashRoyaleService:
     def __init__(self):
@@ -130,23 +136,25 @@ class ClashRoyaleService:
     '''
     River Race Player Activity History Functions
     '''
+
     def clan_river_race_history(self, clan_tag: str, past_weeks: int = 4) -> Tuple[Dict[str, Any], Dict[str, PlayerActivity]]:
         clan_players_war_history = {}
         clan_info = self.clash_royale_client.get_clan_info(clan_tag)
         members_list = clan_info['memberList']
         for member in members_list:
             clan_players_war_history[member['tag']] = PlayerActivity(
-                tag = member['tag'],
-                name = member['name'],
-                role = member['role'],
-                exp_level = member['expLevel'],
-                fame_hist = [None]* past_weeks,
-                boat_attacks_hist = [None]* past_weeks
+                tag=member['tag'],
+                name=member['name'],
+                role=member['role'],
+                exp_level=member['expLevel'],
+                fame_hist=[None] * past_weeks,
+                boat_attacks_hist=[None] * past_weeks
             )
         return clan_info, self.past_weeks_clan_war(clan_players_war_history, clan_tag, past_weeks)
 
     def past_weeks_clan_war(self, clan_players_war_history: Dict[str, PlayerActivity], clan_tag: str, past_weeks: int = 4) -> Dict[str, PlayerActivity]:
-        client_race_log_api_response = self.clash_royale_client.get_river_race_log(clan_tag)
+        client_race_log_api_response = self.clash_royale_client.get_river_race_log(
+            clan_tag)
         grouped_clan_wars = client_race_log_api_response['items'][:past_weeks]
         current_week = 0
         # First loop splits the clan wars into specific week
@@ -158,8 +166,10 @@ class ClashRoyaleService:
                     # Third Grab all the participants from the list and store it into the output object
                     for participant in clan['participants']:
                         if participant['tag'] in clan_players_war_history:
-                            clan_players_war_history[participant['tag']].fame_hist[current_week] = participant['fame']
-                            clan_players_war_history[participant['tag']].boat_attacks_hist[current_week] = participant['boatAttacks']
+                            clan_players_war_history[participant['tag']
+                                                     ].fame_hist[current_week] = participant['fame']
+                            clan_players_war_history[participant['tag']
+                                                     ].boat_attacks_hist[current_week] = participant['boatAttacks']
                     break
             current_week += 1
         # Computing War active, elder worthy, and average fame
@@ -169,3 +179,83 @@ class ClashRoyaleService:
             player.elder_worthy = compute_elder_worthy(player.fame_hist)
             player.avg_fame = compute_average_fame(player.fame_hist)
         return clan_players_war_history
+
+    '''
+    Remaining war attacks
+    '''
+
+    def _get_participated(self, participants: List[Any]) -> int:
+        count = 0
+        for person in participants:
+            if person["decksUsedToday"] != 0:
+                count += 1
+        return count
+
+    def _get_decks_remaining(self, participants: List[Any], clan_members: List[Any]) -> int:
+        tag_to_player_war = {person["tag"]: person for person in participants}
+        tag_to_player_clan = {person["tag"] for person in clan_members}
+        num_players_left_clan = 0
+        num_decks_players_in_clan = 0
+        for player in tag_to_player_war:
+            if player not in tag_to_player_clan and tag_to_player_war[player]['decksUsedToday'] != 0:
+                # Assuming that player leaving the clan will not come back, and they will take up all 4 decks
+                num_players_left_clan += 1
+            else:
+                num_decks_players_in_clan += tag_to_player_war[player]["decksUsedToday"]
+
+        return MAX_DECK_PER_PLAYER*(PARTICIPANTS_LIMIT - num_players_left_clan) - num_decks_players_in_clan
+
+    def _get_players_remaining(self, participants: List[Any], clan_members: List[Any]) -> int:
+        # Identifies players in the clan that hasn't done their wars yet
+        tag_to_player_war = {person["tag"]: person for person in participants}
+        tag_to_player_clan = {person["tag"] for person in clan_members}
+
+        count = 0
+        for tag in tag_to_player_clan:
+            # Assumption: anyone in clan should also be in war_log_history
+            if tag not in tag_to_player_war:
+                log.info(
+                    f"player tag: {tag}, is not in currentriverrace response")
+                continue
+            if tag_to_player_war[tag]["decksUsedToday"] != 4:
+                count += 1
+        return count
+
+    def _get_all_clan_info(self, tags: List[str]) -> list:
+        with Pool(processes=self.pool_size) as pool:
+            all_clan_info = pool.map(
+                self.clash_royale_client.get_clan_info, tags)
+        return all_clan_info
+
+    def clan_remaining_war_attacks(self, clan_tag: str) -> List[ClanRemainingWarAttacks]:
+        curr_river_race = self.clash_royale_client.get_current_river_race(
+            clan_tag)
+        all_clan_info = self._get_all_clan_info(
+            [i['tag'] for i in curr_river_race["clans"]])
+        all_clan_info_dict = {
+            clan_info['tag']: clan_info for clan_info in all_clan_info}
+        all_clan_attacks = []
+        for clan_river_info in curr_river_race["clans"]:
+            tag = clan_river_info["tag"]
+            # Backup: Incase multi-processing is giving an error and test is not passing
+            # clan_info = self.clash_royale_client.get_clan_info(tag)
+            clan_info = all_clan_info_dict[tag]
+            all_clan_attacks.append(
+                ClanRemainingWarAttacks(
+                    name=clan_river_info["name"],
+                    tag=tag,
+                    medals=clan_river_info["periodPoints"],
+                    participated=self._get_participated(
+                        clan_river_info["participants"]
+                    ),
+                    decks_remaining=self._get_decks_remaining(
+                        clan_river_info["participants"], clan_info["memberList"]
+                    ),
+                    players_remaining=self._get_players_remaining(
+                        clan_river_info["participants"], clan_info["memberList"]
+                    ),
+                )
+            )
+
+        all_clan_attacks.sort(key=lambda x: x.medals, reverse=True)
+        return all_clan_attacks

@@ -78,6 +78,208 @@ CLAN_INFO_API_RESPONSE = {
   ]
 }
 
+PER_CLAN_INFO_API_RESPONSE = {
+  "tag": "#P8UGJRGY",
+  "name": "PERU CB",
+  "type": "open",
+  "memberList": [
+    {
+      "tag": "#PERUSER1",
+      "name": "PERUSER1",
+      "role": "member",
+      "lastSeen": "20210617T113925.000Z",
+      "expLevel": 13,
+      "trophies": 5495,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 5,
+      "previousClanRank": 7,
+      "donations": 36,
+      "donationsReceived": 160,
+      "clanChestPoints": 0
+    },
+    {
+      "tag": "#PERUSER3",
+      "name": "PERUSER3",
+      "role": "coLeader",
+      "lastSeen": "20210617T123313.000Z",
+      "expLevel": 13,
+      "trophies": 5563,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 2,
+      "previousClanRank": 1,
+      "donations": 632,
+      "donationsReceived": 360,
+      "clanChestPoints": 0
+    }
+  ]
+}
+
+LIT_CLAN_INFO_API_RESPONSE = {
+  "tag": "#UQ8VVR",
+  "name": "A Lithuania",
+  "type": "open",
+  "memberList": [
+    {
+      "tag": "#LITUSER1",
+      "name": "LITUSER1",
+      "role": "member",
+      "lastSeen": "20210617T113925.000Z",
+      "expLevel": 13,
+      "trophies": 5495,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 5,
+      "previousClanRank": 7,
+      "donations": 36,
+      "donationsReceived": 160,
+      "clanChestPoints": 0
+    },
+    {
+      "tag": "#LITUSER2",
+      "name": "LITUSER2",
+      "role": "elder",
+      "lastSeen": "20210617T122354.000Z",
+      "expLevel": 13,
+      "trophies": 5501,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 4,
+      "previousClanRank": 5,
+      "donations": 68,
+      "donationsReceived": 160,
+      "clanChestPoints": 0
+    },
+    {
+      "tag": "#LITUSER3",
+      "name": "LITUSER3",
+      "role": "coLeader",
+      "lastSeen": "20210617T123313.000Z",
+      "expLevel": 13,
+      "trophies": 5563,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 2,
+      "previousClanRank": 1,
+      "donations": 632,
+      "donationsReceived": 360,
+      "clanChestPoints": 0
+    }
+  ]
+}
+
+RED_CLAN_INFO_API_RESPONSE = {
+  "tag": "#PR2U99V",
+  "name": "Red Hot Chile",
+  "type": "open",
+  "memberList": [
+    {
+      "tag": "#REDUSER1",
+      "name": "REDUSER1",
+      "role": "member",
+      "lastSeen": "20210617T113925.000Z",
+      "expLevel": 13,
+      "trophies": 5495,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 5,
+      "previousClanRank": 7,
+      "donations": 36,
+      "donationsReceived": 160,
+      "clanChestPoints": 0
+    },
+    {
+      "tag": "#REDUSER3",
+      "name": "REDUSER3",
+      "role": "coLeader",
+      "lastSeen": "20210617T123313.000Z",
+      "expLevel": 13,
+      "trophies": 5563,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 2,
+      "previousClanRank": 1,
+      "donations": 632,
+      "donationsReceived": 360,
+      "clanChestPoints": 0
+    }
+  ]
+}
+
+ROY_CLAN_INFO_API_RESPONSE = {
+  "tag": "#2ULLJPUC",
+  "name": "Royal Crusade",
+  "type": "open",
+  "memberList": [
+    {
+      "tag": "#ROYUSER1",
+      "name": "ROYUSER1",
+      "role": "member",
+      "lastSeen": "20210617T113925.000Z",
+      "expLevel": 13,
+      "trophies": 5495,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 5,
+      "previousClanRank": 7,
+      "donations": 36,
+      "donationsReceived": 160,
+      "clanChestPoints": 0
+    },
+    {
+      "tag": "#ROYUSER2",
+      "name": "ROYUSER2",
+      "role": "elder",
+      "lastSeen": "20210617T122354.000Z",
+      "expLevel": 13,
+      "trophies": 5501,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 4,
+      "previousClanRank": 5,
+      "donations": 68,
+      "donationsReceived": 160,
+      "clanChestPoints": 0
+    },
+    {
+      "tag": "#ROYUSER3",
+      "name": "ROYUSER3",
+      "role": "coLeader",
+      "lastSeen": "20210617T123313.000Z",
+      "expLevel": 13,
+      "trophies": 5563,
+      "arena": {
+        "id": 54000013,
+        "name": "Challenger II"
+      },
+      "clanRank": 2,
+      "previousClanRank": 1,
+      "donations": 632,
+      "donationsReceived": 360,
+      "clanChestPoints": 0
+    }
+  ]
+}
+
 PLAYER_1_RESPONSE = {
   "tag": "#LYJVYUUUR",
   "name": "ZEPOL 1244",

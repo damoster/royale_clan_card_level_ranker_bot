@@ -5,12 +5,18 @@ from dataclasses import dataclass
 CARD_TYPE_ID_PREFIX = {'26': 'troop', '27': 'building', '28': 'spell'}
 MAX_CARD_LEVEL = 14
 
-# Minimum fame week required for someone to be active. i.e. used 4 decks 3 times = 12 battles. 12 * 100 = 1200 fame. 
+# Minimum fame week required for someone to be active. i.e. used 4 decks 3 times = 12 battles. 12 * 100 = 1200 fame.
 # 100 comes from the fame for losing non-boat battle
 MIN_FAME_WEEK = 1200
 
 # Maximum discord embed length, if greater, discord bot will error
 MAX_DISCORD_EMBED = 1024
+
+
+# Maximum Participants to participate in war is 50, and they can use a max of 4 decks per day
+PARTICIPANTS_LIMIT = 50
+MAX_DECK_PER_PLAYER = 4
+
 @dataclass
 class PlayerActivity:
     '''
@@ -33,3 +39,13 @@ class PlayerActivity:
     war_active: bool = False
     elder_worthy: bool = False
     avg_fame: float = -1
+
+
+@dataclass
+class ClanRemainingWarAttacks:
+    tag: str
+    name: str
+    medals: int
+    participated: int
+    decks_remaining: int
+    players_remaining: int
