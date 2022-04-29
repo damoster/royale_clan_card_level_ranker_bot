@@ -30,7 +30,6 @@ class BasicInfo(commands.Cog):
                 'for the specific [clan_tag] instead.',
                 f'[!boatattack [clan_tag]]({url}) - Does same thing as `!ausclanboat` but for the specific [clan_tag] instead.',
                 f'[!riverwar [clan_tag] [weeks]]({url}) - Does same thing as `!ausclanwar` but for the specific [clan_tag] instead.',
-                f'[!riverwar [clan_tag] [weeks]]({url}) - Does same thing as `!ausclanwar` but for the specific [clan_tag] instead.',
                 f'[!clanremaining [clan_tag]]({url}) - Does same thing as `!ausclanremaining` but for the specific [clan_tag] instead.'
             ]
             embed.add_field(name='Ausclan commands', value='\n'.join(ausclan_cmds), inline=False)
