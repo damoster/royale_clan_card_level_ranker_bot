@@ -41,7 +41,7 @@ class DiscordBot(commands.Bot):
             message = "Command used is missing required argument"
             logging.warn(get_stack_trace_str(exc))
         else:
-            message = "Oh no! Something went wrong while running the command! Please use **!bothelp** command for supported commands."
+            message = "Oh no! Something went wrong while running the command!"
             # if there are errors not handled above, raise the error and log it
             logging.error(get_stack_trace_str(exc))
 

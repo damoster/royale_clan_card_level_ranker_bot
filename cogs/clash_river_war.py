@@ -126,14 +126,15 @@ def remaining_war_embed(all_clan_attacks):
 
     columns = '**Clan**|**Medals**|**Fame**|**Participated**|**DecksRemaining**|**PlayersRemaining**'
     row_val = []
+    max_name_len = max([len(c.name) for c in all_clan_attacks])
     for clan_attacks in all_clan_attacks:
-        row_val.append('`{:^15}`|`{:^5}`|`{:^6}`|`{:^6}`|`{:^9}`|`{:^10}`'.format(
-            clan_attacks.name,
+        row_val.append('`{}`|`{:^5}`|`{:^6}`|`{:^6}`|`{:^9}`|`{:^10}`'.format(
+            f'{clan_attacks.name:^{max_name_len}}',
             clan_attacks.medals,
             clan_attacks.fame,
-            str(clan_attacks.participated) + '/50',
-            str(clan_attacks.decks_remaining) + ' decks',
-            str(clan_attacks.players_remaining) + ' players'
+            f'{clan_attacks.participated}/50',
+            f'{clan_attacks.decks_remaining} decks',
+            f'{clan_attacks.players_remaining} players'
         ))
     row_val = '\n'.join(row_val)
     embed.add_field(name=columns, value=row_val, inline=False)
