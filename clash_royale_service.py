@@ -245,6 +245,7 @@ class ClashRoyaleService:
                     name=clan_river_info["name"],
                     tag=tag,
                     medals=clan_river_info["periodPoints"],
+                    fame=clan_river_info["fame"],
                     participated=self._get_participated(
                         clan_river_info["participants"]
                     ),
@@ -257,5 +258,5 @@ class ClashRoyaleService:
                 )
             )
 
-        all_clan_attacks.sort(key=lambda x: x.medals, reverse=True)
+        all_clan_attacks.sort(key=lambda x: (x.medals, x.fame), reverse=True)
         return all_clan_attacks

@@ -111,6 +111,34 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
     embed.add_field(name=columns, value=final_str, inline=False)
     return embed
 
+def remaining_war_embed(all_clan_attacks):
+    embed = discord.Embed(
+        description=dedent('''
+            ** Current River Race Remaining War Attacks **
+            **Medals** - Accumulated Medals throughout the River Race
+            **Fame** - Fame in the Current River Race
+            **Participated** - How many players have participated in the Current River Race (1 or more attacks used)
+            **DecksRemaining** - How many decks in the clan remaining that can still be used for the Current River Race
+            **PlayersRemaining** - How many players can still do the war, ignoring those who left and those who participated already
+        '''.format()),
+        colour=discord.Colour.green()
+    )
+
+    columns = '**Clan**|**Medals**|**Fame**|**Participated**|**DecksRemaining**|**PlayersRemaining**'
+    row_val = []
+    max_name_len = max([len(c.name) for c in all_clan_attacks])
+    for clan_attacks in all_clan_attacks:
+        row_val.append('`{}`|`{:^5}`|`{:^6}`|`{:^6}`|`{:^9}`|`{:^10}`'.format(
+            f'{clan_attacks.name:^{max_name_len}}',
+            clan_attacks.medals,
+            clan_attacks.fame,
+            f'{clan_attacks.participated}/50',
+            f'{clan_attacks.decks_remaining} decks',
+            f'{clan_attacks.players_remaining} players'
+        ))
+    row_val = '\n'.join(row_val)
+    embed.add_field(name=columns, value=row_val, inline=False)
+    return embed
 
 class ClashRiverWar(commands.Cog):
     def __init__(self, client):
@@ -205,6 +233,19 @@ class ClashRiverWar(commands.Cog):
             clan_info, clan_players_war_history)
         await ctx.send(embed=embed)
 
+    @commands.command(name="ausclanremaining", pass_context=True)
+    async def ausclanRemainingWarAttacks(self, ctx):
+        async with ctx.typing():
+            all_clan_attacks = self.clash_royale_service.clan_remaining_war_attacks('9GULPJ9L')
+        embed = remaining_war_embed(all_clan_attacks)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="clanremaining", pass_context=True)
+    async def clanRemainingWarAttacks(self, ctx, clan_tag: str):
+        async with ctx.typing():
+            all_clan_attacks = self.clash_royale_service.clan_remaining_war_attacks(clan_tag)
+        embed = remaining_war_embed(all_clan_attacks)
+        await ctx.send(embed=embed)
     @riverwar.error
     async def riverwar_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
