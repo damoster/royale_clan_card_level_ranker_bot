@@ -63,6 +63,14 @@ make test
 ## Running with Docker
 ```
 docker-compose up
+
+or
+
+docker build -t clash-bot .
+
+docker run clash-bot
+
+docker run -d --restart unless-stopped clash-bot
 ```
 ## References
 Helpful links used during development
