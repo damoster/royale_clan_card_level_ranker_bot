@@ -62,7 +62,13 @@ make test
 
 ## Running with Docker
 ```
-docker-compose up
+Can go with either two options below:
+1. Using docker-compose.yml file to run the bot.
+    - docker-compose up
+2. Build a docker image and run the image
+    - docker build -t clash-bot .
+    - docker run clash-bot
+    - docker run -d --restart unless-stopped clash-bot (to prevent container stopping)
 ```
 ## References
 Helpful links used during development
