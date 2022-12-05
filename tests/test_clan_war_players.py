@@ -20,6 +20,8 @@ class TestClanWarPlayers(unittest.TestCase):
         )
 
         all_current_war_players_output = service.clan_players_remaining_war_attacks(clan_tag)
+        # Note 1: there are three players participated in the war, one of them completed all attacks and hence the name is not listed
+        # Note 2: two players have not completed all the war attacks, hence there are two entries in the list
         player_1 = all_current_war_players_output[0]
         player_2 = all_current_war_players_output[1]
         self.assertEqual(len(all_current_war_players_output),2)
