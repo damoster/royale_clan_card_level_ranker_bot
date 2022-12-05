@@ -5,7 +5,7 @@ from multiprocessing import Pool
 from typing import Dict, List, Tuple, Any
 
 from clash_royale_client import ClashRoyaleClient
-from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, ClanRemainingWarAttacks, PlayerActivity, MIN_FAME_WEEK, PARTICIPANTS_LIMIT, MAX_DECK_PER_PLAYER
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, ClanRemainingWarAttacks, PlayerActivity, PlayersRemainingWarAttacks, MIN_FAME_WEEK, PARTICIPANTS_LIMIT, MAX_DECK_PER_PLAYER
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -257,6 +257,43 @@ class ClashRoyaleService:
                     ),
                 )
             )
-
         all_clan_attacks.sort(key=lambda x: (x.medals, x.fame), reverse=True)
         return all_clan_attacks
+
+    def clan_players_remaining_war_attacks(self, clan_tag: str) -> List[PlayersRemainingWarAttacks]:
+        curr_river_race = self.clash_royale_client.get_current_river_race(
+            clan_tag)
+        curr_river_race_participants = {}
+        all_current_war_players = {}
+        all_current_war_players_output = []
+        for participant in curr_river_race['clan']['participants']:
+            curr_river_race_participants[participant['tag']] = participant['decksUsedToday']
+            # Captures war participants who may not currently be in clan but attempted at least one attack
+            if participant['decksUsedToday'] > 0 and participant['decksUsedToday'] < 4:
+                all_current_war_players[participant['tag']] = {
+                    'name': participant['name'],
+                    'decksUsedToday': participant['decksUsedToday'],
+                    'lastSeen': None,
+                    'inClan': False
+                }
+        clan_info = self.clash_royale_client.get_clan_info(clan_tag)
+        # Captures everyone in the clan and checks their decksUsedToday        
+        for clan_member in clan_info['memberList']:
+            if clan_member['tag'] in curr_river_race_participants and curr_river_race_participants[clan_member['tag']] < 4:
+                all_current_war_players[clan_member['tag']] = {
+                    "name": clan_member['name'],
+                    'decksUsedToday': curr_river_race_participants[clan_member['tag']],
+                    'lastSeen': clan_member['lastSeen'],
+                    'inClan': True
+                }
+        
+        for current_war_player in all_current_war_players:
+            all_current_war_players_output.append(PlayersRemainingWarAttacks(
+                        tag = current_war_player,
+                        name=all_current_war_players[current_war_player]['name'],
+                        decks_used_today=all_current_war_players[current_war_player]['decksUsedToday'],
+                        last_seen=all_current_war_players[current_war_player]['lastSeen'],
+                        in_clan=all_current_war_players[current_war_player]['inClan']
+            ))
+        all_current_war_players_output.sort(key=lambda x: (x.decks_used_today, x.in_clan), reverse=True)
+        return all_current_war_players_output

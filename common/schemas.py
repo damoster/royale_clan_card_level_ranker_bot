@@ -50,3 +50,11 @@ class ClanRemainingWarAttacks:
     participated: int
     decks_remaining: int
     players_remaining: int
+
+@dataclass
+class PlayersRemainingWarAttacks:
+    tag: str
+    name: str
+    last_seen: str
+    decks_used_today: int
+    in_clan: bool

@@ -6,7 +6,7 @@ import logging
 from typing import Dict
 
 from clash_royale_service import ClashRoyaleService
-from common.schemas import PlayerActivity, MAX_DISCORD_EMBED
+from common.schemas import PlayerActivity, PlayersRemainingWarAttacks, MAX_DISCORD_EMBED
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
 
 
@@ -139,6 +139,30 @@ def remaining_war_embed(all_clan_attacks):
     embed.add_field(name=columns, value=row_val, inline=False)
     return embed
 
+def players_war_attacks(all_current_war_players: PlayersRemainingWarAttacks):
+    embed = discord.Embed(
+        description=dedent('''
+            **Current River Race Players War Attacks **
+            **decks Used Today** - How many decks the player used today (maximum of 4)
+            **In Clan** - Checking whether is currently in the clan
+            **Player Name** - Accumulated Medals throughout the River Race
+            Note: This list filters all players who has done all their current war
+        '''.format()),
+        colour=discord.Colour.green()
+    )
+
+    columns = '**Decks Used Today**|**In Clan**|**Name**'
+    row_val = []
+    for current_war_player in all_current_war_players:
+        row_val.append(' `{:^5}` | `{:^1}` | **`{}`**'.format(
+            current_war_player.decks_used_today,
+            'T' if current_war_player.in_clan else 'F',
+            current_war_player.name
+        ))
+    row_val = '\n'.join(row_val)
+    embed.add_field(name=columns, value=row_val, inline=False)
+    return embed
+
 class ClashRiverWar(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -231,6 +255,16 @@ class ClashRiverWar(commands.Cog):
         embed = clan_river_race_history_embed(
             clan_info, clan_players_war_history)
         await ctx.send(embed=embed)
+    
+    @riverwar.error
+    async def riverwar_error(self, ctx, error):
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(embed=discord.Embed(
+                description="Incorrect arguments entered.\nCorrect usage: **!riverwar [clan_tag] [past_weeks]**" +
+                "\nOr use the AUSCLAN version: **!ausclanwar**",
+                colour=discord.Colour.red()
+            ))
+
 
     @commands.command(name="ausclanremaining", pass_context=True)
     async def ausclanRemainingWarAttacks(self, ctx):
@@ -245,15 +279,20 @@ class ClashRiverWar(commands.Cog):
             all_clan_attacks = self.clash_royale_service.clan_remaining_war_attacks(clan_tag)
         embed = remaining_war_embed(all_clan_attacks)
         await ctx.send(embed=embed)
-    @riverwar.error
-    async def riverwar_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(embed=discord.Embed(
-                description="Incorrect arguments entered.\nCorrect usage: **!riverwar [clan_tag] [past_weeks]**" +
-                "\nOr use the AUSCLAN version: **!ausclanwar**",
-                colour=discord.Colour.red()
-            ))
 
+    @commands.command(name="ausclanwarplayers", pass_context=True)
+    async def ausclanWarPlayers(self, ctx):
+        async with ctx.typing():
+            all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks('9GULPJ9L')
+        embed = players_war_attacks(all_current_war_players)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="currentwarplayers", pass_context=True)
+    async def ausclanWarPlayers(self, ctx, clan_tag: str):
+        async with ctx.typing():
+            all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks(clan_tag)
+        embed = players_war_attacks(all_current_war_players)
+        await ctx.send(embed=embed)      
 
 def setup(client):
     client.add_cog(ClashRiverWar(client))
