@@ -288,7 +288,7 @@ class ClashRiverWar(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(name="currentwarplayers", pass_context=True)
-    async def ausclanWarPlayers(self, ctx, clan_tag: str):
+    async def currentWarplayers(self, ctx, clan_tag: str):
         async with ctx.typing():
             all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks(clan_tag)
         embed = players_war_attacks(all_current_war_players)
