@@ -27,4 +27,3 @@ class TestClanRemainingWarPlayers(unittest.TestCase):
         self.assertEqual(len(all_current_war_players_output),2)
         self.assertTrue(player_1.decks_used_today == 3)
         self.assertTrue(player_2.decks_used_today == 2)
-        self.assertTrue(player_1.decks_used_today >= player_2.decks_used_today)
