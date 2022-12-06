@@ -227,7 +227,7 @@ class ClashRoyaleService:
                 self.clash_royale_client.get_clan_info, tags)
         return all_clan_info
 
-    def clan_remaining_war_attacks(self, clan_tag: str) -> List[ClanRemainingWarAttacks]:
+    def clan_players_unfinished_war_attacks(self, clan_tag: str) -> List[ClanRemainingWarAttacks]:
         curr_river_race = self.clash_royale_client.get_current_river_race(
             clan_tag)
         all_clan_info = self._get_all_clan_info(
@@ -287,13 +287,13 @@ class ClashRoyaleService:
                     'inClan': True
                 }
         
-        for current_war_player in all_current_war_players:
+        for tag, info in all_current_war_players.items():
             all_current_war_players_output.append(PlayersRemainingWarAttacks(
-                        tag = current_war_player,
-                        name=all_current_war_players[current_war_player]['name'],
-                        decks_used_today=all_current_war_players[current_war_player]['decksUsedToday'],
-                        last_seen=all_current_war_players[current_war_player]['lastSeen'],
-                        in_clan=all_current_war_players[current_war_player]['inClan']
+                        tag = tag,
+                        name=info['name'],
+                        decks_used_today=info['decksUsedToday'],
+                        last_seen=info['lastSeen'],
+                        in_clan=info['inClan']
             ))
         all_current_war_players_output.sort(key=lambda x: (x.decks_used_today, x.in_clan), reverse=True)
         return all_current_war_players_output

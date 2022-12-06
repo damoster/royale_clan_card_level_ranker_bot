@@ -8,7 +8,7 @@ from typing import Dict
 from clash_royale_service import ClashRoyaleService
 from common.schemas import PlayerActivity, PlayersRemainingWarAttacks, MAX_DISCORD_EMBED
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
-
+from discord_embed_formatter import format_embed_output
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
     n = 20  # Number of players to show
@@ -104,10 +104,7 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
     final_str = ['**PROMOTE**'] + row_promote + \
         ['**DEMOTE/KICK**'] + row_demote
     final_str = '\n'.join(final_str)
-    logging.info("embedded content length is: " + str(len(final_str)))
-    if len(final_str) >= MAX_DISCORD_EMBED:
-        warn_msg = "\nNote: Final output has been truncated due to exceeding limit 1024"
-        final_str = final_str[:(MAX_DISCORD_EMBED-len(warn_msg))] + warn_msg
+    final_str = format_embed_output(final_str)
     embed.add_field(name=columns, value=final_str, inline=False)
     return embed
 
@@ -142,24 +139,25 @@ def remaining_war_embed(all_clan_attacks):
 def players_war_attacks(all_current_war_players: PlayersRemainingWarAttacks):
     embed = discord.Embed(
         description=dedent('''
-            **Current River Race Players War Attacks **
-            **decks Used Today** - How many decks the player used today (maximum of 4)
+            **Current River Race - Players with Unfinished War Attacks **
+            **Decks Remaining** - How many decks the player have remaining (minimum of 1)
             **In Clan** - Checking whether is currently in the clan
-            **Player Name** - Accumulated Medals throughout the River Race
-            Note: This list filters all players who has done all their current war
+            **Player Name** - Name of the player
+            Note: This list excludes all players who has done all their current war
         '''.format()),
         colour=discord.Colour.green()
     )
 
-    columns = '**Decks Used Today**|**In Clan**|**Name**'
+    columns = '**Decks Remaining**|**In Clan**|**Player Name**'
     row_val = []
     for current_war_player in all_current_war_players:
         row_val.append(' `{:^5}` | `{:^1}` | **`{}`**'.format(
-            current_war_player.decks_used_today,
-            'T' if current_war_player.in_clan else 'F',
+            4 - current_war_player.decks_used_today,
+            '/' if current_war_player.in_clan else 'X',
             current_war_player.name
         ))
     row_val = '\n'.join(row_val)
+    row_val = format_embed_output(row_val)
     embed.add_field(name=columns, value=row_val, inline=False)
     return embed
 
@@ -269,26 +267,26 @@ class ClashRiverWar(commands.Cog):
     @commands.command(name="ausclanremaining", pass_context=True)
     async def ausclanRemainingWarAttacks(self, ctx):
         async with ctx.typing():
-            all_clan_attacks = self.clash_royale_service.clan_remaining_war_attacks('9GULPJ9L')
+            all_clan_attacks = self.clash_royale_service.clan_players_unfinished_war_attacks('9GULPJ9L')
         embed = remaining_war_embed(all_clan_attacks)
         await ctx.send(embed=embed)
 
     @commands.command(name="clanremaining", pass_context=True)
     async def clanRemainingWarAttacks(self, ctx, clan_tag: str):
         async with ctx.typing():
-            all_clan_attacks = self.clash_royale_service.clan_remaining_war_attacks(clan_tag)
+            all_clan_attacks = self.clash_royale_service.clan_players_unfinished_war_attacks(clan_tag)
         embed = remaining_war_embed(all_clan_attacks)
         await ctx.send(embed=embed)
 
-    @commands.command(name="ausclanwarplayers", pass_context=True)
-    async def ausclanWarPlayers(self, ctx):
+    @commands.command(name="ausclanremainingplayers", pass_context=True)
+    async def ausClanRemainingPlayers(self, ctx):
         async with ctx.typing():
             all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks('9GULPJ9L')
         embed = players_war_attacks(all_current_war_players)
         await ctx.send(embed=embed)
 
-    @commands.command(name="currentwarplayers", pass_context=True)
-    async def currentWarplayers(self, ctx, clan_tag: str):
+    @commands.command(name="clanremainingplayers", pass_context=True)
+    async def clanRemainingPlayers(self, ctx, clan_tag: str):
         async with ctx.typing():
             all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks(clan_tag)
         embed = players_war_attacks(all_current_war_players)

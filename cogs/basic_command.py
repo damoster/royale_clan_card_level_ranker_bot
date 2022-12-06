@@ -23,7 +23,7 @@ class BasicInfo(commands.Cog):
                 f'[!ausclanboat]({url}) - Lists clan members who attacked enemy boats this week.',
                 f'[!ausclanwar [weeks]]({url}) - Shows the war peformance of the players in x amount of weeks. Defaults to 4 weeks if not specified',
                 f'[!ausclanremaining]({url}) - Shows the remaining war attacks & remaining players count for the current river race',
-                f'[!ausclanwarplayers]({url}) - Shows all players within the clan and players who left the clan who has not completed all war attacks'
+                f'[!ausclanremainingplayers]({url}) - Shows all players within the clan and players who left the clan who has not completed all war attacks'
             ]
             generic_cmds = [
                 f'[!bothelp]({url}) - Shows this help message about available commands.',
@@ -32,7 +32,7 @@ class BasicInfo(commands.Cog):
                 f'[!boatattack [clan_tag]]({url}) - Does same thing as `!ausclanboat` but for the specific [clan_tag] instead.',
                 f'[!riverwar [clan_tag] [weeks]]({url}) - Does same thing as `!ausclanwar` but for the specific [clan_tag] instead.',
                 f'[!clanremaining [clan_tag]]({url}) - Does same thing as `!ausclanremaining` but for the specific [clan_tag] instead.',
-                f'[!currentwarplayers]({url}) - Does same thing as `!ausclanwarplayers` but for the specific [clan_tag] instead.'
+                f'[!clanremainingplayers]({url}) - Does same thing as `!ausclanremainingplayers` but for the specific [clan_tag] instead.'
             ]
             embed.add_field(name='Ausclan commands', value='\n'.join(ausclan_cmds), inline=False)
             embed.add_field(name='Other commands', value='\n'.join(generic_cmds), inline=False)

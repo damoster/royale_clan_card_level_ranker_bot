@@ -6,7 +6,7 @@ from clash_royale_service import ClashRoyaleService
 from tests.resources import clash_royale_client_currentriverrace, clash_royale_client_responses
 
 
-class TestClanWarPlayers(unittest.TestCase):
+class TestClanRemainingWarPlayers(unittest.TestCase):
     def test_clan_players_remaining_war_attacks(self):
         service = ClashRoyaleService()
         clan_tag = "#9GULPJ9L"
@@ -25,4 +25,6 @@ class TestClanWarPlayers(unittest.TestCase):
         player_1 = all_current_war_players_output[0]
         player_2 = all_current_war_players_output[1]
         self.assertEqual(len(all_current_war_players_output),2)
+        self.assertTrue(player_1.decks_used_today == 3)
+        self.assertTrue(player_2.decks_used_today == 2)
         self.assertTrue(player_1.decks_used_today >= player_2.decks_used_today)

@@ -138,7 +138,7 @@ class TestClanRemainingWarAttacks(object):
             ]
         )
 
-        all_clan_attacks = service.clan_remaining_war_attacks(clan_tag)
+        all_clan_attacks = service.clan_players_unfinished_war_attacks(clan_tag)
 
         # Test Cases 1 - Ausclan
         # All 3 players partipated, 191 decks remaining (200 - (4+3+2)), 2 players remaining
