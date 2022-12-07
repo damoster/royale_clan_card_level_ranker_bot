@@ -270,12 +270,12 @@ class ClashRoyaleService:
         all_clan_attacks.sort(key=lambda x: (x.medals, x.fame), reverse=True)
         return all_clan_attacks
 
-    def clan_players_remaining_war_attacks(self, clan_tag: str) -> List[PlayersRemainingWarAttacks]:
+    def clan_players_remaining_war_attacks(self, clan_tag: str, exlcude_not_in_clan=False) -> List[PlayersRemainingWarAttacks]:
         curr_river_race = self.clash_royale_client.get_current_river_race(clan_tag)
         clan_info = self.clash_royale_client.get_clan_info(clan_tag)
         players_remaining = self._get_players_remaining(
             participants=curr_river_race['clan']['participants'],
             clan_members= clan_info["memberList"],
-            exlcude_not_in_clan=False)
+            exlcude_not_in_clan=exlcude_not_in_clan)
         players_remaining.sort(key=lambda x: (x.decks_used_today, x.in_clan), reverse=True)
         return players_remaining

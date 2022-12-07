@@ -216,7 +216,7 @@ class ClashRiverWar(commands.Cog):
         await self.fetch_ranked_members(ctx, '9GULPJ9L', card_type_arg)
 
     @commands.command(name="boatattack", pass_context=True)
-    async def boatattack(self, ctx, clan_tag):
+    async def boatattack(self, ctx, clan_tag: str):
         async with ctx.typing():
             clan_info, war_partitipation_table = self.royale_api_website_scraper.get_war_participation_table(
                 clan_tag)
@@ -279,16 +279,22 @@ class ClashRiverWar(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(name="ausclanremainingplayers", pass_context=True)
-    async def ausClanRemainingPlayers(self, ctx):
+    async def ausClanRemainingPlayers(self, ctx, exlcude_not_in_clan:str = "not_exclude"):
+        exclude = False
+        if exlcude_not_in_clan == "exclude":
+            exclude = True
         async with ctx.typing():
-            all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks('9GULPJ9L')
+            all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks('9GULPJ9L', exclude)
         embed = players_war_attacks(all_current_war_players)
         await ctx.send(embed=embed)
 
     @commands.command(name="clanremainingplayers", pass_context=True)
-    async def clanRemainingPlayers(self, ctx, clan_tag: str):
+    async def clanRemainingPlayers(self, ctx, clan_tag: str, exlcude_not_in_clan:str= "not_exclude"):
+        exclude = False
+        if exlcude_not_in_clan == "exclude":
+            exclude = True
         async with ctx.typing():
-            all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks(clan_tag)
+            all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks(clan_tag, exclude)
         embed = players_war_attacks(all_current_war_players)
         await ctx.send(embed=embed)      
 
