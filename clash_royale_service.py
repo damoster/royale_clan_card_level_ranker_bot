@@ -5,7 +5,7 @@ from multiprocessing import Pool
 from typing import Dict, List, Tuple, Any
 
 from clash_royale_client import ClashRoyaleClient
-from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, ClanRemainingWarAttacks, PlayerActivity, MIN_FAME_WEEK, PARTICIPANTS_LIMIT, MAX_DECK_PER_PLAYER
+from common.schemas import CARD_TYPE_ID_PREFIX, MAX_CARD_LEVEL, ClanRemainingWarAttacks, PlayerActivity, PlayersRemainingWarAttacks, MIN_FAME_WEEK, PARTICIPANTS_LIMIT, MAX_DECK_PER_PLAYER
 
 
 # NOTE: we want the highest level to come first (sort descending)
@@ -205,21 +205,31 @@ class ClashRoyaleService:
 
         return MAX_DECK_PER_PLAYER*(PARTICIPANTS_LIMIT - num_players_left_clan) - num_decks_players_in_clan
 
-    def _get_players_remaining(self, participants: List[Any], clan_members: List[Any]) -> int:
+    def _get_players_remaining(self, participants: List[Any], clan_members: List[Any], exlcude_not_in_clan: bool = False) -> List[PlayersRemainingWarAttacks]:
         # Identifies players in the clan that hasn't done their wars yet
         tag_to_player_war = {person["tag"]: person for person in participants}
-        tag_to_player_clan = {person["tag"] for person in clan_members}
-
-        count = 0
-        for tag in tag_to_player_clan:
-            # Assumption: anyone in clan should also be in war_log_history
-            if tag not in tag_to_player_war:
-                log.info(
-                    f"player tag: {tag}, is not in currentriverrace response")
+        tag_to_player_clan = {person["tag"]: person for person in clan_members}
+        players_remaining = []
+        
+        for tag in tag_to_player_war:
+            if tag not in tag_to_player_clan and exlcude_not_in_clan:
                 continue
             if tag_to_player_war[tag]["decksUsedToday"] != 4:
-                count += 1
-        return count
+                last_seen = None
+                in_clan = False
+                
+                if tag in tag_to_player_clan:
+                    last_seen = tag_to_player_clan[tag]['lastSeen']
+                    in_clan = True
+
+                players_remaining.append(PlayersRemainingWarAttacks(
+                    tag=tag,
+                    name=tag_to_player_war[tag]['name'],
+                    decks_used_today=tag_to_player_war[tag]['decksUsedToday'],
+                    last_seen=last_seen,
+                    in_clan = in_clan
+                ))
+        return players_remaining
 
     def _get_all_clan_info(self, tags: List[str]) -> list:
         with Pool(processes=self.pool_size) as pool:
@@ -227,7 +237,7 @@ class ClashRoyaleService:
                 self.clash_royale_client.get_clan_info, tags)
         return all_clan_info
 
-    def clan_remaining_war_attacks(self, clan_tag: str) -> List[ClanRemainingWarAttacks]:
+    def clan_players_unfinished_war_attacks(self, clan_tag: str) -> List[ClanRemainingWarAttacks]:
         curr_river_race = self.clash_royale_client.get_current_river_race(
             clan_tag)
         all_clan_info = self._get_all_clan_info(
@@ -252,11 +262,20 @@ class ClashRoyaleService:
                     decks_remaining=self._get_decks_remaining(
                         clan_river_info["participants"], clan_info["memberList"]
                     ),
-                    players_remaining=self._get_players_remaining(
-                        clan_river_info["participants"], clan_info["memberList"]
-                    ),
+                    players_remaining=len(self._get_players_remaining(
+                        clan_river_info["participants"], clan_info["memberList"], exlcude_not_in_clan=True
+                    )),
                 )
             )
-
         all_clan_attacks.sort(key=lambda x: (x.medals, x.fame), reverse=True)
         return all_clan_attacks
+
+    def clan_players_remaining_war_attacks(self, clan_tag: str, exlcude_not_in_clan=False) -> List[PlayersRemainingWarAttacks]:
+        curr_river_race = self.clash_royale_client.get_current_river_race(clan_tag)
+        clan_info = self.clash_royale_client.get_clan_info(clan_tag)
+        players_remaining = self._get_players_remaining(
+            participants=curr_river_race['clan']['participants'],
+            clan_members= clan_info["memberList"],
+            exlcude_not_in_clan=exlcude_not_in_clan)
+        players_remaining.sort(key=lambda x: (x.decks_used_today, x.in_clan), reverse=True)
+        return players_remaining

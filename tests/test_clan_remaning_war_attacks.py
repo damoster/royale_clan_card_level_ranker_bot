@@ -31,18 +31,18 @@ class TestClanRemainingWarAttacks(object):
     def test_get_players_remaining(self):
         service = ClashRoyaleService()
         participants = [
-            {"tag": "A", "decksUsedToday": 1},
-            {"tag": "B", "decksUsedToday": 2},
-            {"tag": "C", "decksUsedToday": 4},
+            {"tag": "A", "name": "player_A", "decksUsedToday": 1},
+            {"tag": "B", "name": "player_B", "decksUsedToday": 2},
+            {"tag": "C", "name": "player_C", "decksUsedToday": 4},
             # Suppose this player D left the clan
-            {"tag": "D", "decksUsedToday": 4}
+            {"tag": "D", "name": "player_D", "decksUsedToday": 4}
         ]
         members_list = [
-            {"tag": "B"},
-            {"tag": "A"},
-            {"tag": "C"}
+            {"tag": "B", "lastSeen": "20221206T202149.000Z"},
+            {"tag": "A", "lastSeen": "20221206T202149.000Z"},
+            {"tag": "C", "lastSeen": "20221206T202149.000Z"}
         ]
-        assert service._get_players_remaining(participants, members_list) == 2
+        assert len(service._get_players_remaining(participants, members_list)) == 2
 
     @pytest.mark.parametrize(
         "members_list, expected_decks_remaining",
@@ -138,7 +138,7 @@ class TestClanRemainingWarAttacks(object):
             ]
         )
 
-        all_clan_attacks = service.clan_remaining_war_attacks(clan_tag)
+        all_clan_attacks = service.clan_players_unfinished_war_attacks(clan_tag)
 
         # Test Cases 1 - Ausclan
         # All 3 players partipated, 191 decks remaining (200 - (4+3+2)), 2 players remaining

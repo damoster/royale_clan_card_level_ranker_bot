@@ -6,9 +6,9 @@ import logging
 from typing import Dict
 
 from clash_royale_service import ClashRoyaleService
-from common.schemas import PlayerActivity, MAX_DISCORD_EMBED
+from common.schemas import PlayerActivity, PlayersRemainingWarAttacks, MAX_DISCORD_EMBED
 from royale_api_website_scraper import RoyaleApiWebsiteScraper
-
+from discord_embed_formatter import format_embed_output
 
 def create_clan_members_ranked_embed(clan_info, clan_members_ranked, card_type_arg='all'):
     n = 20  # Number of players to show
@@ -104,10 +104,7 @@ def clan_river_race_history_embed(clan_info: Dict, clan_players_war_history: Dic
     final_str = ['**PROMOTE**'] + row_promote + \
         ['**DEMOTE/KICK**'] + row_demote
     final_str = '\n'.join(final_str)
-    logging.info("embedded content length is: " + str(len(final_str)))
-    if len(final_str) >= MAX_DISCORD_EMBED:
-        warn_msg = "\nNote: Final output has been truncated due to exceeding limit 1024"
-        final_str = final_str[:(MAX_DISCORD_EMBED-len(warn_msg))] + warn_msg
+    final_str = format_embed_output(final_str)
     embed.add_field(name=columns, value=final_str, inline=False)
     return embed
 
@@ -137,6 +134,31 @@ def remaining_war_embed(all_clan_attacks):
             f'{clan_attacks.players_remaining} players'
         ))
     row_val = '\n'.join(row_val)
+    embed.add_field(name=columns, value=row_val, inline=False)
+    return embed
+
+def players_war_attacks(all_current_war_players: PlayersRemainingWarAttacks):
+    embed = discord.Embed(
+        description=dedent('''
+            **Current River Race - Players with Unfinished War Attacks **
+            **Decks Remaining** - How many decks the player have remaining (minimum of 1)
+            **In Clan** - Checking whether is currently in the clan
+            **Player Name** - Name of the player
+            Note: This list excludes all players who has done all their current war
+        '''.format()),
+        colour=discord.Colour.green()
+    )
+
+    columns = '**Decks Remaining**|**In Clan**|**Player Name**'
+    row_val = []
+    for current_war_player in all_current_war_players:
+        row_val.append(' `{:^5}` | `{:^1}` | **`{}`**'.format(
+            4 - current_war_player.decks_used_today,
+            '/' if current_war_player.in_clan else 'X',
+            current_war_player.name
+        ))
+    row_val = '\n'.join(row_val)
+    row_val = format_embed_output(row_val)
     embed.add_field(name=columns, value=row_val, inline=False)
     return embed
 
@@ -195,7 +217,7 @@ class ClashRiverWar(commands.Cog):
         await self.fetch_ranked_members(ctx, '9GULPJ9L', card_type_arg)
 
     @commands.command(name="boatattack", pass_context=True)
-    async def boatattack(self, ctx, clan_tag):
+    async def boatattack(self, ctx, clan_tag: str):
         async with ctx.typing():
             clan_info, war_partitipation_table = self.royale_api_website_scraper.get_war_participation_table(
                 clan_tag)
@@ -232,20 +254,7 @@ class ClashRiverWar(commands.Cog):
         embed = clan_river_race_history_embed(
             clan_info, clan_players_war_history)
         await ctx.send(embed=embed)
-
-    @commands.command(name="ausclanremaining", pass_context=True)
-    async def ausclanRemainingWarAttacks(self, ctx):
-        async with ctx.typing():
-            all_clan_attacks = self.clash_royale_service.clan_remaining_war_attacks('9GULPJ9L')
-        embed = remaining_war_embed(all_clan_attacks)
-        await ctx.send(embed=embed)
-
-    @commands.command(name="clanremaining", pass_context=True)
-    async def clanRemainingWarAttacks(self, ctx, clan_tag: str):
-        async with ctx.typing():
-            all_clan_attacks = self.clash_royale_service.clan_remaining_war_attacks(clan_tag)
-        embed = remaining_war_embed(all_clan_attacks)
-        await ctx.send(embed=embed)
+    
     @riverwar.error
     async def riverwar_error(self, ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
@@ -255,6 +264,40 @@ class ClashRiverWar(commands.Cog):
                 colour=discord.Colour.red()
             ))
 
+
+    @commands.command(name="ausclanremaining", pass_context=True)
+    async def ausclanRemainingWarAttacks(self, ctx):
+        async with ctx.typing():
+            all_clan_attacks = self.clash_royale_service.clan_players_unfinished_war_attacks('9GULPJ9L')
+        embed = remaining_war_embed(all_clan_attacks)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="clanremaining", pass_context=True)
+    async def clanRemainingWarAttacks(self, ctx, clan_tag: str):
+        async with ctx.typing():
+            all_clan_attacks = self.clash_royale_service.clan_players_unfinished_war_attacks(clan_tag)
+        embed = remaining_war_embed(all_clan_attacks)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="ausclanremainingplayers", pass_context=True)
+    async def ausClanRemainingPlayers(self, ctx, exlcude_not_in_clan:str = "not_exclude"):
+        exclude = False
+        if exlcude_not_in_clan == "exclude":
+            exclude = True
+        async with ctx.typing():
+            all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks('9GULPJ9L', exclude)
+        embed = players_war_attacks(all_current_war_players)
+        await ctx.send(embed=embed)
+
+    @commands.command(name="clanremainingplayers", pass_context=True)
+    async def clanRemainingPlayers(self, ctx, clan_tag: str, exlcude_not_in_clan:str= "not_exclude"):
+        exclude = False
+        if exlcude_not_in_clan == "exclude":
+            exclude = True
+        async with ctx.typing():
+            all_current_war_players = self.clash_royale_service.clan_players_remaining_war_attacks(clan_tag, exclude)
+        embed = players_war_attacks(all_current_war_players)
+        await ctx.send(embed=embed)      
 
 def setup(client):
     client.add_cog(ClashRiverWar(client))
