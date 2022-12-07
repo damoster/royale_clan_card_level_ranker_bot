@@ -23,7 +23,7 @@ class BasicInfo(commands.Cog):
                 f'[!ausclanboat]({url}) - Lists clan members who attacked enemy boats this week.',
                 f'[!ausclanwar [weeks]]({url}) - Shows the war peformance of the players in x amount of weeks. Defaults to 4 weeks if not specified',
                 f'[!ausclanremaining]({url}) - Shows the remaining war attacks & remaining players count for the current river race',
-                f'[!ausclanremainingplayers]({url}) - Shows all players within the clan and players who left the clan who has not completed all war attacks'
+                f'[!ausclanremainingplayers]({url}) - Shows all players within the clan and players who left the clan who has not completed all war attacks. Add "exclude" argument to exclude players out of the clan'
             ]
             generic_cmds = [
                 f'[!bothelp]({url}) - Shows this help message about available commands.',
