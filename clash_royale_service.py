@@ -212,7 +212,7 @@ class ClashRoyaleService:
         players_remaining = []
         
         for tag in tag_to_player_war:
-            if tag not in tag_to_player_clan and exlcude_not_in_clan:
+            if tag not in tag_to_player_clan and (exlcude_not_in_clan or tag_to_player_war[tag]["decksUsedToday"] == 0):
                 continue
             if tag_to_player_war[tag]["decksUsedToday"] != 4:
                 last_seen = None
