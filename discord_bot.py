@@ -5,11 +5,11 @@ import logging
 from discord.ext import commands
 
 
-def load_cogs(client):
+async def load_cogs(client: commands.Bot):
     for cog in [file.split(".")[0] for file in os.listdir("cogs") if file.endswith(".py")]:
         try:
             if cog != "__init__":
-                client.load_extension(f"cogs.{cog}")
+                await client.load_extension(f"cogs.{cog}")
         except Exception as exc:
             logging.error(exc)
 
@@ -23,11 +23,13 @@ def get_stack_trace_str(exc: Exception):
 
 class DiscordBot(commands.Bot):
     def __init__(self, command_prefix):
-        super().__init__(command_prefix, activity=discord.Game(name="!bothelp"))
+        intents = discord.Intents.default()
+        intents.message_content = True
+        super().__init__(command_prefix, intents = intents, activity=discord.Game(name="!bothelp"))
 
     async def on_ready(self):
         # Loading the Cogs command from the cogs folder
-        load_cogs(self)
+        await load_cogs(self)
         print(f'Bot is up and ready. We have logged in as {self.user}')
         logging.info(f'Bot is up and ready. We have logged in as {self.user}')
 

@@ -299,5 +299,5 @@ class ClashRiverWar(commands.Cog):
         embed = players_war_attacks(all_current_war_players)
         await ctx.send(embed=embed)      
 
-def setup(client):
-    client.add_cog(ClashRiverWar(client))
+async def setup(client):
+    await client.add_cog(ClashRiverWar(client))

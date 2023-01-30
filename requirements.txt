@@ -1,12 +1,13 @@
 aiohttp==3.7.4.post0
 async-timeout==3.0.1
 attrs==21.2.0
+autopep8==1.6.0
 beautifulsoup4==4.9.3
 bs4==0.0.1
 certifi==2021.5.30
 chardet==4.0.0
-discord==1.7.3
-discord.py==1.7.3
+discord==2.1.0
+discord.py==2.1.0
 flake8==3.9.2
 idna==2.10
 iniconfig==1.1.1
