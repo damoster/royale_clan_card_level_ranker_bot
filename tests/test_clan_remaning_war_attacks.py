@@ -34,15 +34,25 @@ class TestClanRemainingWarAttacks(object):
             {"tag": "A", "name": "player_A", "decksUsedToday": 1},
             {"tag": "B", "name": "player_B", "decksUsedToday": 2},
             {"tag": "C", "name": "player_C", "decksUsedToday": 4},
-            # Suppose this player D left the clan
-            {"tag": "D", "name": "player_D", "decksUsedToday": 4}
+            # Suppose player D left the clan and used all attacks
+            {"tag": "D", "name": "player_D", "decksUsedToday": 4},
+            # Suppose player E left the clan but did 1 war attack
+            {"tag": "E", "name": "player_E", "decksUsedToday": 1},
+            # Suppose player F left the clan and didnt use any deck
+            {"tag": "F", "name": "player_F", "decksUsedToday": 0},
         ]
         members_list = [
             {"tag": "B", "lastSeen": "20221206T202149.000Z"},
             {"tag": "A", "lastSeen": "20221206T202149.000Z"},
             {"tag": "C", "lastSeen": "20221206T202149.000Z"}
         ]
-        assert len(service._get_players_remaining(participants, members_list)) == 2
+
+        players_remaining = service._get_players_remaining(participants, members_list)
+        # Includes players A,B, and E who have decks remaining
+        assert len(players_remaining) == 3
+        players_remaining = service._get_players_remaining(participants, members_list, True)
+        # Only Includes players A and B as E is out of the clan (excluded from the third argument in_clan)
+        assert len(players_remaining) == 2
 
     @pytest.mark.parametrize(
         "members_list, expected_decks_remaining",
