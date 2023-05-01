@@ -1,7 +1,6 @@
 import os
 import requests
-
-
+import logging
 # pre-condition: Assumes environment variable 'ROYALE_API_KEY' has been set
 class ClashRoyaleClient:
     def __init__(self):
@@ -13,15 +12,21 @@ class ClashRoyaleClient:
             'Authorization': 'Bearer {}'.format(self.auth_token)}
 
     def make_request(self, request_url, method_name):
-        response = requests.get(request_url, headers=self.request_headers)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            # TODO is throwing an exception the best way of handling this? Should add exception handlinig at top level probs
-            raise ValueError(
-                "[{}] recieved response code: {}. Error body: {}".format(
-                    method_name, response.status_code, response.json())
-            )
+        try:
+            response = requests.get(request_url, headers=self.request_headers, timeout=5)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                # TODO is throwing an exception the best way of handling this? Should add exception handlinig at top level probs
+                raise ValueError(
+                    "[{}] recieved response code: {}. Error body: {}".format(
+                        method_name, response.status_code, response.json())
+                )
+        except requests.exceptions.Timeout:
+            logging.error(f"The request timed out for: {method_name, response.status_code, response.json()}")
+        except requests.exceptions.RequestException as e:
+            logging.error("An error occurred:", e)
+
 
     # url param pre-condition -> clan_tag should not have # and all caps
     def get_clan_info(self, clan_tag):
